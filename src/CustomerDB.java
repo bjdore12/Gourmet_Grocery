@@ -59,7 +59,7 @@ public class CustomerDB {
         return prep.execute();
     }
 
-    public static ResultSet displayCustomers() throws SQLException, ClassNotFoundException {
+    public static ResultSet getCustomers() throws SQLException, ClassNotFoundException {
         Statement state;
         ResultSet res;
 

@@ -31,7 +31,6 @@ public class InventoryDB {
             return false;
     }
 
-
     public static void buildDatabase() throws ClassNotFoundException, SQLException {
         Statement state;
 
