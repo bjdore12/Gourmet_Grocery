@@ -5,16 +5,7 @@ public class CustomerDB {
     private static Connection con;
 
     static {
-        try {
-            con = getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    public static Connection getConnection() throws  SQLException {
-        // Database path -- if it's new database, it will be created in the project folder
-        return DriverManager.getConnection("jdbc:sqlite:SQLiteGG.db");
+        con = DatabaseConnection.getDBConnection();
     }
 
     public static boolean databaseExists() throws SQLException, ClassNotFoundException {
@@ -38,7 +29,7 @@ public class CustomerDB {
 
             System.out.println("Building the Customer_Table table");
             state = con.createStatement();
-            state.executeUpdate("CREATE TABLE Inventory_Table(" +
+            state.executeUpdate("CREATE TABLE Customer_Table(" +
                     "TUID INTEGER," +
                     "First_Name VARCHAR(60)," +
                     "Last_Name VARCHAR(60)," +
@@ -47,7 +38,10 @@ public class CustomerDB {
         }
     }
 
-    public static boolean addCustomer(int TUID, String firstName, String lastName, String phone) throws SQLException {
+    public static boolean addCustomer(int TUID, String firstName, String lastName, String phone) throws SQLException, ClassNotFoundException {
+        if (!databaseExists())
+            buildDatabase();
+
         PreparedStatement prep;
 
         prep = con.prepareStatement("INSERT INTO Customer_Table VALUES(?,?,?,?);");
@@ -66,6 +60,18 @@ public class CustomerDB {
         state = con.createStatement();
         res = state.executeQuery("SELECT TUID, First_Name, Last_Name, Phone FROM Customer_Table");
         return res;
+    }
+
+    public static boolean customerExists(int TUID) throws SQLException, ClassNotFoundException {
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT TUID, First_Name, Last_Name, Phone FROM Customer_Table WHERE TUID = " + TUID);
+        if (res.next())
+            return true;
+        else
+            return false;
     }
 
     public static void resetCustomers() throws SQLException, ClassNotFoundException {

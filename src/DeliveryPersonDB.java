@@ -4,16 +4,7 @@ public class DeliveryPersonDB {
     private static Connection con;
 
     static {
-        try {
-            con = getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    public static Connection getConnection() throws  SQLException {
-        // Database path -- if it's new database, it will be created in the project folder
-        return DriverManager.getConnection("jdbc:sqlite:SQLiteGG.db");
+        con = DatabaseConnection.getDBConnection();
     }
 
     public static boolean databaseExists() throws SQLException, ClassNotFoundException {

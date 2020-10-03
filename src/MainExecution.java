@@ -1,8 +1,10 @@
+import java.io.FileNotFoundException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class MainExecution {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException, SQLException, ClassNotFoundException {
         ResultSet rs;
 
         Scanner userInput = new Scanner(System.in);
@@ -26,5 +28,7 @@ public class MainExecution {
         catch (Exception e) {
             e.printStackTrace();
         }
+
+        TextFileParser.readFile("gourmet.txt");
     }
 }
