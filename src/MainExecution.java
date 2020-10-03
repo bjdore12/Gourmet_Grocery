@@ -22,8 +22,6 @@ public class MainExecution {
                         rs.getString("Quantity") + " " +
                         rs.getString("Unit_Price"));
             }
-
-            InventoryDB.resetInventory();
         }
         catch (Exception e) {
             e.printStackTrace();
