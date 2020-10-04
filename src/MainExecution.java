@@ -7,13 +7,13 @@ public class MainExecution {
         Scanner userInput = new Scanner(System.in);
 
         System.out.println("Do you want to reset the Gourmet Grocery Inventory to default? (Y/N)");
-        String resetInv = userInput.next();
+        String resetInv = userInput.next().toUpperCase();
 
         if (resetInv.equals("Y"))
             InventoryDB.resetInventory();
 
         System.out.println("Do you want to reset the customer and order tables to empty states? (Y/N)");
-        String resetCustAndOrds = userInput.next();
+        String resetCustAndOrds = userInput.next().toUpperCase();
 
         if (resetCustAndOrds.equals("Y")) {
             CustomerDB.resetCustomers();
@@ -23,7 +23,7 @@ public class MainExecution {
 
         userInput.nextLine();
         System.out.println("\nDo you want to run the file 'gourmet.txt'? (Y/N)");
-        String userChoice = userInput.next();
+        String userChoice = userInput.next().toUpperCase();
 
         if (userChoice.equals("Y"))
             TextFileParser.readFile("gourmet.txt");

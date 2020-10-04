@@ -40,7 +40,7 @@ public class InventoryToOrderDB {
             buildDatabase();
 
         ResultSet itemDetails = InventoryDB.getInventoryItemDetails(Inventory_TUID);
-        Quantity = getOrderQuantityFromInventory(Inventory_TUID, Quantity);
+        Quantity = getOrderQuantityFromInventory(Order_TUID, Inventory_TUID, Quantity);
         InventoryDB.changeQuantity(Inventory_TUID, -Quantity);
 
         PreparedStatement prep;
@@ -105,7 +105,7 @@ public class InventoryToOrderDB {
         return res;
     }
 
-    public static int getOrderQuantityFromInventory(int Inventory_TUID, int requestedQuantity) throws SQLException {
+    public static int getOrderQuantityFromInventory(int Order_TUID, int Inventory_TUID, int requestedQuantity) throws SQLException {
         ResultSet itemDetails = InventoryDB.getInventoryItemDetails(Inventory_TUID);
         int quantity = itemDetails.getInt("Quantity");
 
@@ -113,7 +113,7 @@ public class InventoryToOrderDB {
             return requestedQuantity;
         else {
             System.out.println("ERROR: requested quantity is too high for item " + Inventory_TUID + " \n\t\trequested: " + requestedQuantity + "\n\t\tavailable: " + quantity);
-            System.out.println("Adding " + quantity + " items to the order\n");
+            System.out.println("Adding " + quantity + " items to the order #" + Order_TUID + "\n");
             return quantity;
         }
     }
