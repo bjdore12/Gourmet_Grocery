@@ -50,13 +50,15 @@ public class MainExecution {
                 InventoryDB.displayCurrentInventory();
             }
             if (userChoice.equals("2")) {
-                // TODO: Must implement function to run Customer/Order report
+                CustomerOrdersReporter.printFullOrderSummary();
             }
             if (userChoice.equals("3")) {
                 // TODO: Must implement function to run Delivery Schedules report
+                System.out.println("COMING SOON - Delivery Schedules Report");
             }
             if (userChoice.equals("4")) {
                 // TODO: Must implement function to run Employee Earning reports
+                System.out.println("COMING SOON - Employee Earnings Report");
             }
             if (userChoice.equals("5")) {
                 readUserSelectedFile(userInput);

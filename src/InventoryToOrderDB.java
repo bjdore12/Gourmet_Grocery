@@ -111,8 +111,11 @@ public class InventoryToOrderDB {
 
         if (quantity >= requestedQuantity)
             return requestedQuantity;
-        else
+        else {
+            System.out.println("ERROR: requested quantity is too high for item " + Inventory_TUID + " \n\t\trequested: " + requestedQuantity + "\n\t\tavailable: " + quantity);
+            System.out.println("Adding " + quantity + " items to the order\n");
             return quantity;
+        }
     }
 
     public static boolean inventoryToOrderExists(int Order_TUID, int Inventory_TUID) throws SQLException {
@@ -136,5 +139,77 @@ public class InventoryToOrderDB {
         res = state.executeQuery("SELECT * FROM Inventory_To_Order_Table WHERE ORDER_TUID = " + Order_TUID + " AND Inventory_TUID = " + Inventory_TUID);
 
         return res;
+    }
+
+    public static ResultSet getInventoryToOrderDetails(int Order_TUID) throws SQLException {
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT * FROM Inventory_To_Order_Table WHERE ORDER_TUID = " + Order_TUID);
+
+        return res;
+    }
+
+    public static int getOrderTotalQuantity(int Order_TUID) throws SQLException {
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT SUM(Quantity) AS total_quantity FROM Inventory_To_Order_Table WHERE ORDER_TUID = " + Order_TUID);
+
+        return res.getInt("total_quantity");
+    }
+
+    public static int getOrderTotalQuantity(int Order_TUID, int Inventory_TUID) throws SQLException {
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT SUM(Quantity) AS total_quantity FROM Inventory_To_Order_Table WHERE ORDER_TUID = " + Order_TUID + " AND Inventory_TUID = " + Inventory_TUID);
+
+        return res.getInt("total_quantity");
+    }
+
+    public static boolean deleteInvToOrderAssocationIfZeroQuantity(int Order_TUID) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        PreparedStatement prep;
+        int orderQuantity = getOrderTotalQuantity(Order_TUID);
+
+        deleteAssociation(Order_TUID);
+
+        if (orderQuantity == 0) {
+            OrderDB.deleteOrder(Order_TUID);
+            prep = con.prepareStatement("DELETE FROM Inventory_To_Order_Table WHERE ORDER_TUID = ?");
+            prep.setInt(1, Order_TUID);
+            return prep.execute();
+        }
+
+        return false;
+    }
+
+    public static boolean deleteAssociation(int Order_TUID) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        PreparedStatement prep;
+
+        ResultSet orderDetails = getInventoryToOrderDetails(Order_TUID);
+
+        while (orderDetails.next()) {
+            if (orderDetails.getInt("Quantity") == 0) {
+                prep = con.prepareStatement("DELETE FROM Inventory_To_Order_Table WHERE ORDER_TUID = ? AND Inventory_TUID = ?");
+                prep.setInt(1, Order_TUID);
+                prep.setInt(2, orderDetails.getInt("Inventory_TUID"));
+
+                return prep.execute();
+            }
+        }
+
+
+
+        return false;
     }
 }

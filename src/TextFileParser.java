@@ -28,10 +28,13 @@ public class TextFileParser {
         if (fields[0].equals("O")) {
             InventoryToOrderDB.addOrderToInventory(Integer.parseInt(fields[2]), Integer.parseInt(fields[3]), Integer.parseInt(fields[4]));
             OrderDB.addOrder(Integer.parseInt(fields[2]), Integer.parseInt(fields[1]));
+            InventoryToOrderDB.deleteInvToOrderAssocationIfZeroQuantity(Integer.parseInt(fields[2]));
         }
         if (fields[0].equals("M")) {
             InventoryToOrderDB.modifyOrderToInventory(Integer.parseInt(fields[2]), Integer.parseInt(fields[3]), Integer.parseInt(fields[4]));
             OrderDB.addOrder(Integer.parseInt(fields[2]), Integer.parseInt(fields[1]));
+            InventoryToOrderDB.deleteInvToOrderAssocationIfZeroQuantity(Integer.parseInt(fields[2]));
+           // InventoryToOrderDB.deleteAssociation(Integer.parseInt(fields[2]), Integer.parseInt(fields[3]));
         }
     }
 

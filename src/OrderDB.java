@@ -76,6 +76,18 @@ public class OrderDB {
         return prep.execute();
     }
 
+    public static ResultSet getOrders() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT * FROM Order_Table GROUP BY TUID");
+        return res;
+    }
+
     public static void resetOrders() throws SQLException {
         if (!databaseExists())
             buildDatabase();
@@ -86,5 +98,14 @@ public class OrderDB {
         prep.execute();
     }
 
+    public static boolean deleteOrder(int TUID) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
 
+        PreparedStatement prep;
+
+        prep = con.prepareStatement("DELETE FROM Order_Table WHERE TUID = ?");
+        prep.setInt(1, TUID);
+        return prep.execute();
+    }
 }
