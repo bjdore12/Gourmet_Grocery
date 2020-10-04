@@ -57,29 +57,33 @@ public class InventoryToOrderDB {
         if (!databaseExists())
             buildDatabase();
 
-        // ResultSet itemDetails = InventoryDB.getInventoryItemDetails(Inventory_TUID);
+        boolean associationExists = inventoryToOrderExists(Order_TUID, Inventory_TUID);
 
         PreparedStatement prep;
 
-        prep = con.prepareStatement("UPDATE Inventory_To_Order_Table\n" +
-                "SET Quantity = (SELECT Quantity\n" +
-                "                FROM Inventory_To_Order_Table\n" +
-                "                WHERE Order_TUID = ? AND Inventory_TUID = ?) + ?,\n" +
-                "    Inventory_Unit_Price = ((SELECT Quantity FROM Inventory_To_Order_Table WHERE Order_TUID = ? AND Inventory_TUID = ?) + ?) *\n" +
-                "                           (SELECT Unit_Price FROM Inventory_Table WHERE TUID = ?)\n" +
-                "WHERE Order_TUID = ? AND Inventory_TUID = ?;");
+        if (associationExists) {
+            prep = con.prepareStatement("UPDATE Inventory_To_Order_Table\n" +
+                    "SET Quantity = (SELECT Quantity\n" +
+                    "                FROM Inventory_To_Order_Table\n" +
+                    "                WHERE Order_TUID = ? AND Inventory_TUID = ?) + ?,\n" +
+                    "    Inventory_Unit_Price = ((SELECT Quantity FROM Inventory_To_Order_Table WHERE Order_TUID = ? AND Inventory_TUID = ?) + ?) *\n" +
+                    "                           (SELECT Unit_Price FROM Inventory_Table WHERE TUID = ?)\n" +
+                    "WHERE Order_TUID = ? AND Inventory_TUID = ?;");
 
-        prep.setInt(1, Order_TUID);
-        prep.setInt(2, Inventory_TUID);
-        prep.setInt(3, quantityChange);
-        prep.setInt(4, Order_TUID);
-        prep.setInt(5, Inventory_TUID);
-        prep.setInt(6, quantityChange);
-        prep.setInt(7, Inventory_TUID);
-        prep.setInt(8, Order_TUID);
-        prep.setInt(9, Inventory_TUID);
+            prep.setInt(1, Order_TUID);
+            prep.setInt(2, Inventory_TUID);
+            prep.setInt(3, quantityChange);
+            prep.setInt(4, Order_TUID);
+            prep.setInt(5, Inventory_TUID);
+            prep.setInt(6, quantityChange);
+            prep.setInt(7, Inventory_TUID);
+            prep.setInt(8, Order_TUID);
+            prep.setInt(9, Inventory_TUID);
 
-        return prep.execute();
+            return prep.execute();
+        } else {
+            return addOrderToInventory(Order_TUID, Inventory_TUID, quantityChange);
+        }
     }
 
     public static boolean orderExists(int TUID) throws SQLException {
@@ -108,5 +112,18 @@ public class InventoryToOrderDB {
         state = con.createStatement();
         res = state.executeQuery("SELECT SUM(Inventory_Unit_Price) AS total_cost FROM Inventory_To_Order_Table WHERE ORDER_TUID = " + Order_TUID);
         return res;
+    }
+
+    public static boolean inventoryToOrderExists(int Order_TUID, int Inventory_TUID) throws SQLException {
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT * FROM Inventory_To_Order_Table WHERE ORDER_TUID = " + Order_TUID + " AND Inventory_TUID = " + Inventory_TUID);
+
+        if (res.next())
+            return true;
+        else
+            return false;
     }
 }
