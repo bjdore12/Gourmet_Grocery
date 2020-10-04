@@ -107,4 +107,24 @@ public class InventoryDB {
         res = state.executeQuery("SELECT TUID, Item_Name, Quantity, Unit_Price FROM Inventory_Table WHERE TUID = " + TUID);
         return res;
     }
+
+
+    public static boolean changeQuantity(int TUID, int requestedQuantity) throws SQLException {
+        ResultSet res = getInventoryItemDetails(TUID);
+        PreparedStatement prep;
+
+        if (res.next())  {
+            int quantity = res.getInt("Quantity");
+            quantity = (quantity + requestedQuantity > 0) ? quantity + requestedQuantity : 0;
+
+            prep = con.prepareStatement("UPDATE Inventory_Table SET Quantity = ? WHERE TUID = ?");
+            prep.setInt(1, quantity);
+            prep.setInt(2, TUID);
+
+            return prep.execute();
+
+        } else {
+            return false;
+        }
+    }
 }
