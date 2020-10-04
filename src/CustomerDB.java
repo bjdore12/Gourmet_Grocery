@@ -8,7 +8,7 @@ public class CustomerDB {
         con = DatabaseConnection.getDBConnection();
     }
 
-    public static boolean databaseExists() throws SQLException, ClassNotFoundException {
+    public static boolean databaseExists() throws SQLException {
         Statement state;
         ResultSet res;
 
@@ -53,7 +53,7 @@ public class CustomerDB {
         return prep.execute();
     }
 
-    public static ResultSet getCustomers() throws SQLException, ClassNotFoundException {
+    public static ResultSet getCustomers() throws SQLException {
         Statement state;
         ResultSet res;
 
@@ -62,7 +62,7 @@ public class CustomerDB {
         return res;
     }
 
-    public static boolean customerExists(int TUID) throws SQLException, ClassNotFoundException {
+    public static boolean customerExists(int TUID) throws SQLException {
         Statement state;
         ResultSet res;
 
@@ -74,7 +74,7 @@ public class CustomerDB {
             return false;
     }
 
-    public static void resetCustomers() throws SQLException, ClassNotFoundException {
+    public static void resetCustomers() throws SQLException {
         PreparedStatement prep;
 
         prep = con.prepareStatement("DELETE FROM Customer_Table");

@@ -55,7 +55,7 @@ public class DeliveryPersonDB {
         prep.execute();
     }
 
-    public static ResultSet getDeliveryPersons() throws SQLException, ClassNotFoundException {
+    public static ResultSet getDeliveryPersons() throws SQLException {
         Statement state;
         ResultSet res;
 

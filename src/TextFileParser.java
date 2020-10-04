@@ -25,6 +25,10 @@ public class TextFileParser {
         if (fields[0].equals("C") && !CustomerDB.customerExists(Integer.parseInt(fields[1]))) {
             CustomerDB.addCustomer(Integer.parseInt(fields[1]), fields[2], fields[3], fields[4]);
         }
+        if (fields[0].equals("O")) {
+            InventoryToOrderDB.addOrderToInventory(Integer.parseInt(fields[2]), Integer.parseInt(fields[3]), Integer.parseInt(fields[4]));
+            OrderDB.addOrder(Integer.parseInt(fields[2]), Integer.parseInt(fields[1]));
+        }
     }
 
 }

@@ -8,7 +8,7 @@ public class InventoryDB {
         con = DatabaseConnection.getDBConnection();
     }
 
-    public static boolean databaseExists() throws SQLException, ClassNotFoundException {
+    public static boolean databaseExists() throws SQLException {
         Statement state;
         ResultSet res;
 
@@ -22,7 +22,7 @@ public class InventoryDB {
             return false;
     }
 
-    public static void buildDatabase() throws ClassNotFoundException, SQLException {
+    public static void buildDatabase() throws SQLException {
         Statement state;
 
         if (!databaseExists()) {
@@ -40,7 +40,7 @@ public class InventoryDB {
         }
     }
 
-    private static void populateInventory() throws SQLException, ClassNotFoundException {
+    private static void populateInventory() throws SQLException {
         PreparedStatement prep;
         System.out.println("Add records to Inventory_Table table");
 
@@ -59,7 +59,7 @@ public class InventoryDB {
 
     }
 
-    public static ResultSet displayInventory() throws SQLException, ClassNotFoundException {
+    public static ResultSet displayInventory() throws SQLException {
         Statement state;
         ResultSet res;
 
@@ -68,11 +68,12 @@ public class InventoryDB {
         return res;
     }
 
-    public static void resetInventory() throws SQLException, ClassNotFoundException {
+    public static void resetInventory() throws SQLException {
         PreparedStatement prep;
 
         prep = con.prepareStatement("DELETE FROM Inventory_Table");
         prep.execute();
+        populateInventory();
     }
 
     public static boolean addInventoryItem(int TUID, String itemName, int quantity, double unitPrice) throws SQLException {
@@ -84,5 +85,14 @@ public class InventoryDB {
         prep.setInt(3, quantity);
         prep.setDouble(4, unitPrice);
         return prep.execute();
+    }
+
+    public static ResultSet getInventoryItemDetails(int TUID) throws SQLException {
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT TUID, Item_Name, Quantity, Unit_Price FROM Inventory_Table WHERE TUID = " + TUID);
+        return res;
     }
 }

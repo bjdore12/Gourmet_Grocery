@@ -2,3 +2,4 @@
 /out/*
 *.iml
 *.db
+.DS_Store
