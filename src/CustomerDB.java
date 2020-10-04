@@ -27,7 +27,6 @@ public class CustomerDB {
 
         if (!databaseExists()) {
 
-            System.out.println("Building the Customer_Table table");
             state = con.createStatement();
             state.executeUpdate("CREATE TABLE Customer_Table(" +
                     "TUID INTEGER," +
@@ -54,6 +53,9 @@ public class CustomerDB {
     }
 
     public static ResultSet getCustomers() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         Statement state;
         ResultSet res;
 
@@ -63,6 +65,9 @@ public class CustomerDB {
     }
 
     public static ResultSet getCustomers(int TUID) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         Statement state;
         ResultSet res;
 
@@ -72,6 +77,9 @@ public class CustomerDB {
     }
 
     public static boolean customerExists(int TUID) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         Statement state;
         ResultSet res;
 
@@ -84,6 +92,9 @@ public class CustomerDB {
     }
 
     public static void resetCustomers() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         PreparedStatement prep;
 
         prep = con.prepareStatement("DELETE FROM Customer_Table");

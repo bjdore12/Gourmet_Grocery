@@ -25,7 +25,6 @@ public class InventoryToOrderDB {
 
         if (!databaseExists()) {
 
-            System.out.println("Building the Order_Table");
             state = con.createStatement();
             state.executeUpdate("CREATE TABLE Inventory_To_Order_Table(" +
                     "ORDER_TUID INTEGER," +
@@ -88,6 +87,9 @@ public class InventoryToOrderDB {
     }
 
     public static void resetInventoryToOrder() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         PreparedStatement prep;
 
         prep = con.prepareStatement("DELETE FROM Inventory_To_Order_Table");

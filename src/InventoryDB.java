@@ -27,7 +27,6 @@ public class InventoryDB {
 
         if (!databaseExists()) {
 
-            System.out.println("Building the Inventory_Table table");
             state = con.createStatement();
             state.executeUpdate("CREATE TABLE Inventory_Table(" +
                     "TUID INTEGER," +
@@ -42,7 +41,6 @@ public class InventoryDB {
 
     private static void populateInventory() throws SQLException {
         PreparedStatement prep;
-        System.out.println("Add records to Inventory_Table table");
 
         addInventoryItem(101, "Peanut Butter – Chunky", 100, 10.00);
         addInventoryItem(102, "Peanut Butter – Smooth", 100, 11.00);
@@ -125,6 +123,30 @@ public class InventoryDB {
 
         } else {
             return false;
+        }
+    }
+
+    public static void displayCurrentInventory() {
+        ResultSet rs;
+        try {
+            // Bring back the set of user from the database
+            rs = InventoryDB.displayInventory();
+            // Iterate over the resultset, print out each record's details
+
+            System.out.printf("\n%-5s %-25s %-9s %s\n", "TUID", "Item", "Quantity", "Unit Price");
+            System.out.println("-------------------------------------------------------------");
+
+            while (rs.next()) {
+                System.out.printf("%-5d %-25s %-9s %s\n", rs.getInt("TUID"),
+                        rs.getString("Item_Name"),
+                        rs.getString("Quantity"),
+                        rs.getString("Unit_Price"));
+            }
+            System.out.println("-------------------------------------------------------------\n");
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

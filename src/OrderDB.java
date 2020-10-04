@@ -25,7 +25,6 @@ public class OrderDB {
 
         if (!databaseExists()) {
 
-            System.out.println("Building the Order_Table");
             state = con.createStatement();
             state.executeUpdate("CREATE TABLE Order_Table(" +
                     "TUID INTEGER," +
@@ -74,11 +73,13 @@ public class OrderDB {
             prep.setInt(2, TUID);
         }
 
-
         return prep.execute();
     }
 
     public static void resetOrders() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         PreparedStatement prep;
 
         prep = con.prepareStatement("DELETE FROM Order_Table");
