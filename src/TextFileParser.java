@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class TextFileParser {
+
     private static File readableFile;
     private static Scanner reader;
 
@@ -17,7 +18,6 @@ public class TextFileParser {
             fields = currentLine.split("\t");
             databaseAction(fields);
         }
-
         reader.close();
     }
 
@@ -27,6 +27,10 @@ public class TextFileParser {
         }
         if (fields[0].equals("O")) {
             InventoryToOrderDB.addOrderToInventory(Integer.parseInt(fields[2]), Integer.parseInt(fields[3]), Integer.parseInt(fields[4]));
+            OrderDB.addOrder(Integer.parseInt(fields[2]), Integer.parseInt(fields[1]));
+        }
+        if (fields[0].equals("M")) {
+            InventoryToOrderDB.modifyOrderToInventory(Integer.parseInt(fields[2]), Integer.parseInt(fields[3]), Integer.parseInt(fields[4]));
             OrderDB.addOrder(Integer.parseInt(fields[2]), Integer.parseInt(fields[1]));
         }
     }

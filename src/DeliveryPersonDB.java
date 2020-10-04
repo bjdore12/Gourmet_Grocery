@@ -38,7 +38,8 @@ public class DeliveryPersonDB {
         }
     }
 
-    private static void populateDeliveryPersons() throws SQLException, ClassNotFoundException {
+    private static void populateDeliveryPersons() throws SQLException {
+
         PreparedStatement prep;
         System.out.println("Add records to Inventory_Table table");
 
@@ -55,12 +56,27 @@ public class DeliveryPersonDB {
         prep.execute();
     }
 
-    public static ResultSet getDeliveryPersons() throws SQLException {
+    public static ResultSet getDeliveryPersons() throws SQLException, ClassNotFoundException {
+        if (!databaseExists())
+            buildDatabase();
+
         Statement state;
         ResultSet res;
 
         state = con.createStatement();
         res = state.executeQuery("SELECT TUID, Name, Pay_Rate,  FROM DeliveryPerson_Table");
+        return res;
+    }
+
+    public static ResultSet getDeliveryPersons(int TUID) throws SQLException, ClassNotFoundException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT TUID, Name, Pay_Rate,  FROM DeliveryPerson_Table WHERE TUID = " + TUID);
         return res;
     }
 }

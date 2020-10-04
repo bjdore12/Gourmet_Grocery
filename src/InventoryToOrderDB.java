@@ -53,6 +53,35 @@ public class InventoryToOrderDB {
         return prep.execute();
     }
 
+    public static boolean modifyOrderToInventory(int Order_TUID, int Inventory_TUID, int quantityChange) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        // ResultSet itemDetails = InventoryDB.getInventoryItemDetails(Inventory_TUID);
+
+        PreparedStatement prep;
+
+        prep = con.prepareStatement("UPDATE Inventory_To_Order_Table\n" +
+                "SET Quantity = (SELECT Quantity\n" +
+                "                FROM Inventory_To_Order_Table\n" +
+                "                WHERE Order_TUID = ? AND Inventory_TUID = ?) + ?,\n" +
+                "    Inventory_Unit_Price = ((SELECT Quantity FROM Inventory_To_Order_Table WHERE Order_TUID = ? AND Inventory_TUID = ?) + ?) *\n" +
+                "                           (SELECT Unit_Price FROM Inventory_Table WHERE TUID = ?)\n" +
+                "WHERE Order_TUID = ? AND Inventory_TUID = ?;");
+
+        prep.setInt(1, Order_TUID);
+        prep.setInt(2, Inventory_TUID);
+        prep.setInt(3, quantityChange);
+        prep.setInt(4, Order_TUID);
+        prep.setInt(5, Inventory_TUID);
+        prep.setInt(6, quantityChange);
+        prep.setInt(7, Inventory_TUID);
+        prep.setInt(8, Order_TUID);
+        prep.setInt(9, Inventory_TUID);
+
+        return prep.execute();
+    }
+
     public static boolean orderExists(int TUID) throws SQLException {
         Statement state;
         ResultSet res;

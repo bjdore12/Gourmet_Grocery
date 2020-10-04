@@ -22,7 +22,7 @@ public class CustomerDB {
             return false;
     }
 
-    public static void buildDatabase() throws ClassNotFoundException, SQLException {
+    public static void buildDatabase() throws SQLException {
         Statement state;
 
         if (!databaseExists()) {
@@ -59,6 +59,15 @@ public class CustomerDB {
 
         state = con.createStatement();
         res = state.executeQuery("SELECT TUID, First_Name, Last_Name, Phone FROM Customer_Table");
+        return res;
+    }
+
+    public static ResultSet getCustomers(int TUID) throws SQLException {
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT TUID, First_Name, Last_Name, Phone FROM Customer_Table WHERE TUID = " + TUID);
         return res;
     }
 

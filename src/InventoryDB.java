@@ -60,6 +60,9 @@ public class InventoryDB {
     }
 
     public static ResultSet displayInventory() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         Statement state;
         ResultSet res;
 
@@ -69,6 +72,9 @@ public class InventoryDB {
     }
 
     public static void resetInventory() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         PreparedStatement prep;
 
         prep = con.prepareStatement("DELETE FROM Inventory_Table");
@@ -77,6 +83,9 @@ public class InventoryDB {
     }
 
     public static boolean addInventoryItem(int TUID, String itemName, int quantity, double unitPrice) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         PreparedStatement prep;
 
         prep = con.prepareStatement("INSERT INTO Inventory_Table VALUES(?,?,?,?);");
@@ -88,6 +97,9 @@ public class InventoryDB {
     }
 
     public static ResultSet getInventoryItemDetails(int TUID) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
         Statement state;
         ResultSet res;
 

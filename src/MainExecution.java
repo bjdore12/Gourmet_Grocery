@@ -15,7 +15,6 @@ public class MainExecution {
             InventoryDB.resetInventory();
 
         try {
-            InventoryDB.buildDatabase();
             // Bring back the set of user from the database
             rs = InventoryDB.displayInventory();
             // Iterate over the resultset, print out each record's details
@@ -38,7 +37,6 @@ public class MainExecution {
             OrderDB.resetOrders();
             InventoryToOrderDB.resetInventoryToOrder();
         }
-
 
         userInput.nextLine();
         System.out.println("\nDo you want to run the file 'gourmet.txt'? (Y/N)");
