@@ -112,7 +112,7 @@ public class InventoryToOrderDB {
         if (quantity >= requestedQuantity)
             return requestedQuantity;
         else {
-            System.out.println("ERROR: requested quantity is too high for item " + Inventory_TUID + " \n\t\trequested: " + requestedQuantity + "\n\t\tavailable: " + quantity);
+            System.out.println("(ORDER #" + Order_TUID + ") ERROR: requested quantity is too high for item " + Inventory_TUID + " \n\t\trequested: " + requestedQuantity + "\n\t\tavailable: " + quantity);
             System.out.println("Adding " + quantity + " items to the order #" + Order_TUID + "\n");
             return quantity;
         }
@@ -207,9 +207,6 @@ public class InventoryToOrderDB {
                 return prep.execute();
             }
         }
-
-
-
         return false;
     }
 }

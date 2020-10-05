@@ -100,4 +100,28 @@ public class CustomerDB {
         prep = con.prepareStatement("DELETE FROM Customer_Table");
         prep.execute();
     }
+
+    public static void displayCustomerLog() {
+        ResultSet rs;
+        try {
+            // Bring back the set of user from the database
+            rs = getCustomers();
+            // Iterate over the resultset, print out each record's details
+
+            System.out.printf("\n%-5s %-12s %-12s %s\n", "TUID", "First Name", "Last Name", "Phone");
+            System.out.println("-------------------------------------------------------------");
+
+            while (rs.next()) {
+                System.out.printf("%-5d %-12s %-12s %s\n", rs.getInt("TUID"),
+                        rs.getString("First_Name"),
+                        rs.getString("Last_Name"),
+                        rs.getString("Phone"));
+            }
+            System.out.println("-------------------------------------------------------------\n");
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -36,12 +36,13 @@ public class MainExecution {
 
         userInput.nextLine();
         while(!userChoice.equals("Exit")) {
-            System.out.print("Please type an option as shown below (1/2/3/4/5):\n");
+            System.out.print("Please type an option as shown below (1/2/3/4/5/6):\n");
             System.out.print("\t1 --> Run Inventory Report (Type 1)\n");
-            System.out.print("\t2 --> Run Customer Order Summary and Costs Report (Type 2)\n");
-            System.out.print("\t3 --> Run Delivery Schedules Report (Type 3)\n");
-            System.out.print("\t4 --> Run Employee Earnings (Type 4)\n");
-            System.out.print("\t5 --> Process a Transaction File (Type 5)\n");
+            System.out.print("\t2 --> Run Customer Log Report (Type 2)\n");
+            System.out.print("\t3 --> Run Customer Order Summary and Costs Report (Type 3)\n");
+            System.out.print("\t4 --> Run Delivery Schedules Report (Type 4)\n");
+            System.out.print("\t5 --> Run Employee Earnings (Type 5)\n");
+            System.out.print("\t6 --> Process a Transaction File (Type 6)\n");
             System.out.print("\nType 'Exit' to close the program\n");
 
             userChoice = userInput.nextLine();
@@ -50,17 +51,20 @@ public class MainExecution {
                 InventoryDB.displayCurrentInventory();
             }
             if (userChoice.equals("2")) {
-                CustomerOrdersReporter.printFullOrderSummary();
+                CustomerDB.displayCustomerLog();
             }
             if (userChoice.equals("3")) {
+                CustomerOrdersReporter.printFullOrderSummary();
+            }
+            if (userChoice.equals("4")) {
                 // TODO: Must implement function to run Delivery Schedules report
                 System.out.println("COMING SOON - Delivery Schedules Report");
             }
-            if (userChoice.equals("4")) {
+            if (userChoice.equals("5")) {
                 // TODO: Must implement function to run Employee Earning reports
                 System.out.println("COMING SOON - Employee Earnings Report");
             }
-            if (userChoice.equals("5")) {
+            if (userChoice.equals("6")) {
                 readUserSelectedFile(userInput);
             }
         }
@@ -70,6 +74,6 @@ public class MainExecution {
         System.out.print("\nPlease type a file to run: ");
         String userFile = userInput.next();
         TextFileParser.readFile(userFile);
-        userInput.nextLine();
+        if(userInput.hasNextLine()) userInput.nextLine();
     }
 }
