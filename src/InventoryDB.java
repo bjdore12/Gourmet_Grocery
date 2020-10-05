@@ -1,9 +1,10 @@
 import java.sql.*;
+import java.text.NumberFormat;
 
 public class InventoryDB {
 
     private static Connection con;
-
+    private static NumberFormat formatter = NumberFormat.getCurrencyInstance();
     static {
         con = DatabaseConnection.getDBConnection();
     }
@@ -140,7 +141,7 @@ public class InventoryDB {
                 System.out.printf("%-5d %-25s %-9s %s\n", rs.getInt("TUID"),
                         rs.getString("Item_Name"),
                         rs.getString("Quantity"),
-                        rs.getString("Unit_Price"));
+                        formatter.format(rs.getDouble("Unit_Price")));
             }
             System.out.println("-------------------------------------------------------------\n");
 

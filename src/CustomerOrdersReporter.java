@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
 
 public class CustomerOrdersReporter {
 
@@ -12,6 +13,8 @@ public class CustomerOrdersReporter {
     }
 
     public static void printOrderSpecifics(int Order_TUID) throws SQLException {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+
         Statement state;
         ResultSet res;
         ResultSet itemDetails;
@@ -23,12 +26,13 @@ public class CustomerOrdersReporter {
 
         while (res.next()) {
             itemDetails = InventoryDB.getInventoryItemDetails(res.getInt("Inventory_TUID"));
-            System.out.printf("\t%-5d %-25s %-9s %s\n", res.getInt("Inventory_TUID"), itemDetails.getString("Item_Name"), res.getInt("Quantity"), res.getDouble("Inventory_Unit_Price"));
+            System.out.printf("\t%-5d %-25s %-9s %s\n", res.getInt("Inventory_TUID"), itemDetails.getString("Item_Name"), res.getInt("Quantity"), formatter.format(res.getDouble("Inventory_Unit_Price")));
         }
         System.out.println();
     }
 
     public static void printFullOrderSummary() throws SQLException {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
         ResultSet orderSummary = OrderDB.getOrders();
         ResultSet customerInfo;
 
@@ -43,7 +47,7 @@ public class CustomerOrdersReporter {
                     customerInfo.getString("Last_Name"),
                     customerInfo.getString("Phone"),
                     orderQuantity,
-                    orderSummary.getDouble("Order_Total"));
+                    formatter.format(orderSummary.getDouble("Order_Total")));
             System.out.println("---------------------------------------------------------------------------------");
             printOrderSpecifics(orderSummary.getInt("TUID"));
         }

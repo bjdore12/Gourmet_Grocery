@@ -35,7 +35,7 @@ public class MainExecution {
         // Program execution ends when the user types the 'Exit' command.
 
         userInput.nextLine();
-        while(!userChoice.equals("Exit")) {
+        while(!userChoice.equals("exit")) {
             System.out.print("Please type an option as shown below (1/2/3/4/5/6):\n");
             System.out.print("\t1 --> Run Inventory Report (Type 1)\n");
             System.out.print("\t2 --> Run Customer Log Report (Type 2)\n");
@@ -45,7 +45,7 @@ public class MainExecution {
             System.out.print("\t6 --> Process a Transaction File (Type 6)\n");
             System.out.print("\nType 'Exit' to close the program\n");
 
-            userChoice = userInput.nextLine();
+            userChoice = userInput.nextLine().toLowerCase();
 
             if (userChoice.equals("1")) {
                 InventoryDB.displayCurrentInventory();
