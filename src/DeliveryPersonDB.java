@@ -44,13 +44,13 @@ public class DeliveryPersonDB {
         System.out.println("Add records to Inventory_Table table");
 
         prep = con.prepareStatement("INSERT INTO DeliveryPerson_Table VALUES(?,?,?);");
-        prep.setInt(001, 101);
+        prep.setInt(1, 101);
         prep.setString(2, "Barb");
         prep.setDouble(3, 22.50);
         prep.execute();
 
         prep = con.prepareStatement("INSERT INTO DeliveryPerson_Table VALUES(?,?,?);");
-        prep.setInt(001, 101);
+        prep.setInt(1, 102);
         prep.setString(2, "Alan");
         prep.setDouble(3, 19.00);
         prep.execute();
@@ -76,7 +76,7 @@ public class DeliveryPersonDB {
         ResultSet res;
 
         state = con.createStatement();
-        res = state.executeQuery("SELECT TUID, Name, Pay_Rate,  FROM DeliveryPerson_Table WHERE TUID = " + TUID);
+        res = state.executeQuery("SELECT * FROM DeliveryPerson_Table WHERE TUID = " + TUID);
         return res;
     }
 }
