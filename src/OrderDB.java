@@ -85,6 +85,18 @@ public class OrderDB {
         return res;
     }
 
+    public static ResultSet getOrders(int TUID) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT * FROM Order_Table WHERE TUID = " + TUID);
+        return res;
+    }
+
     public static void resetOrders() throws SQLException {
         if (!databaseExists())
             buildDatabase();
@@ -98,6 +110,9 @@ public class OrderDB {
     public static boolean deleteOrder(int TUID) throws SQLException {
         if (!databaseExists())
             buildDatabase();
+
+        ResultSet orderDetails = getOrders(TUID);
+        Scheduler.cancelDelivery(orderDetails.getString("Delivery_Date_Time"), orderDetails.getInt("DeliveryPerson_TUID"));
 
         PreparedStatement prep;
 
