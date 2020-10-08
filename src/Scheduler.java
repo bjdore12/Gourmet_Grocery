@@ -15,7 +15,7 @@ public class Scheduler {
     private static int timeFourSlots = 2;
 
     private static LocalTime currentDeliveryTime = DELIVERY_TIME_ONE;
-    private static LocalDate currentDeliveryDate = LocalDate.now();
+    private static LocalDate currentDeliveryDate = LocalDate.now().plusDays(1);
 
     private static Stack<String> cancelledOrderDates = new Stack<>();
     private static Stack<Integer> cancelledOrderAssociatedDeliveryPersons = new Stack<>();
@@ -40,7 +40,6 @@ public class Scheduler {
     }
 
     public static void cancelDelivery(String dateAndTime, Integer deliveryPerson) {
-        // TODO: Need to implement something that will comprehend delivery cancellations
         cancelledOrderDates.add(dateAndTime);
         cancelledOrderAssociatedDeliveryPersons.add(deliveryPerson);
 

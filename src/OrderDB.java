@@ -85,6 +85,18 @@ public class OrderDB {
         return res;
     }
 
+    public static ResultSet getOrders(String beginDate, String endDate) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT * FROM Order_Table WHERE DATE(\"Delivery_Date_Time\") >= DATE('" + beginDate + "') AND DATE(\"Delivery_Date_Time\") <= DATE('" + endDate + "') GROUP BY TUID");
+        return res;
+    }
+
     public static ResultSet getOrders(int TUID) throws SQLException {
         if (!databaseExists())
             buildDatabase();

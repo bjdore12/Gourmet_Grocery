@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
 
-public class CustomerOrdersReporter {
+public class Reporter {
 
     private static Connection con;
 
@@ -56,12 +56,33 @@ public class CustomerOrdersReporter {
         }
     }
 
+    public static void printOrderDeliveryTimes() throws SQLException, ClassNotFoundException {
+        ResultSet orderSummary = OrderDB.getOrders();
+        ResultSet customerInfo;
+
+        System.out.printf("%-9s %-15s %-15s %-20s %-17s\n", "Order ID", "Customer - FN", "Customer - LN", "Delivery Date/Time", "Delivery Person");
+        System.out.println("---------------------------------------------------------------------------");
+        while(orderSummary.next()) {
+            customerInfo = CustomerDB.getCustomers(orderSummary.getInt("Customer_TUID"));
+            int orderQuantity = InventoryToOrderDB.getOrderTotalQuantity(orderSummary.getInt("TUID"));
+            ResultSet deliveryPerson = DeliveryPersonDB.getDeliveryPersons(orderSummary.getInt("DeliveryPerson_TUID"));
+
+            System.out.printf("%-9d %-15s %-15s %-20s %-17s\n",
+                    orderSummary.getInt("TUID"),
+                    customerInfo.getString("First_Name"),
+                    customerInfo.getString("Last_Name"),
+                    orderSummary.getString("Delivery_Date_Time"),
+                    deliveryPerson.getString("Name"));
+        }
+
+        System.out.println();
+    }
+
     public static void printOrderSummary() {
         // TODO: Make a more simplified version of the order reports
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        //printOrderSpecifics(1);
-        printFullOrderSummary();
+        printOrderDeliveryTimes();
     }
 }

@@ -1,3 +1,5 @@
+import org.omg.PortableServer.RequestProcessingPolicy;
+
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -54,11 +56,11 @@ public class MainExecution {
                 CustomerDB.displayCustomerLog();
             }
             if (userChoice.equals("3")) {
-                CustomerOrdersReporter.printFullOrderSummary();
+                Reporter.printFullOrderSummary();
             }
             if (userChoice.equals("4")) {
                 // TODO: Must implement function to run Delivery Schedules report
-                System.out.println("COMING SOON - Delivery Schedules Report");
+                Reporter.printOrderDeliveryTimes();
             }
             if (userChoice.equals("5")) {
                 // TODO: Must implement function to run Employee Earning reports
