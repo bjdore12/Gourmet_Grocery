@@ -31,7 +31,7 @@ public class CustomerOrdersReporter {
         System.out.println();
     }
 
-    public static void printFullOrderSummary() throws SQLException {
+    public static void printFullOrderSummary() throws SQLException, ClassNotFoundException {
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         ResultSet orderSummary = OrderDB.getOrders();
         ResultSet customerInfo;
@@ -39,16 +39,19 @@ public class CustomerOrdersReporter {
         while(orderSummary.next()) {
             customerInfo = CustomerDB.getCustomers(orderSummary.getInt("Customer_TUID"));
             int orderQuantity = InventoryToOrderDB.getOrderTotalQuantity(orderSummary.getInt("TUID"));
-            System.out.printf("\n%-9s %-15s %-15s %-15s %-9s %-9s\n", "Order ID", "Customer - FN", "Customer - LN", "Phone", "Quantity", "Order Total");
+            ResultSet deliveryPerson = DeliveryPersonDB.getDeliveryPersons(orderSummary.getInt("DeliveryPerson_TUID"));
+            System.out.printf("\n%-9s %-15s %-15s %-15s %-9s %-20s %-17s %-9s\n", "Order ID", "Customer - FN", "Customer - LN", "Phone", "Quantity", "Delivery Date/Time", "Delivery Person", "Order Total");
 
-            System.out.printf("%-9d %-15s %-15s %-15s %-9s %-9s\n",
+            System.out.printf("%-9d %-15s %-15s %-15s %-9s %-20s %-17s %-9s\n",
                     orderSummary.getInt("TUID"),
                     customerInfo.getString("First_Name"),
                     customerInfo.getString("Last_Name"),
                     customerInfo.getString("Phone"),
                     orderQuantity,
+                    orderSummary.getString("Delivery_Date_Time"),
+                    deliveryPerson.getString("Name"),
                     formatter.format(orderSummary.getDouble("Order_Total")));
-            System.out.println("---------------------------------------------------------------------------------");
+            System.out.println("-------------------------------------------------------------------------------------------------------------------------");
             printOrderSpecifics(orderSummary.getInt("TUID"));
         }
     }
@@ -57,7 +60,7 @@ public class CustomerOrdersReporter {
         // TODO: Make a more simplified version of the order reports
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
         //printOrderSpecifics(1);
         printFullOrderSummary();
     }

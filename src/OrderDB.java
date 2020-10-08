@@ -29,16 +29,11 @@ public class OrderDB {
             state.executeUpdate("CREATE TABLE Order_Table(" +
                     "TUID INTEGER," +
                     "Customer_TUID VARCHAR(60)," +
-                    "Delivery_Date_Time DATE," +
+                    "Delivery_Date_Time VARCHAR(60)," +
                     "DeliveryPerson_TUID INTEGER," +
                     "Order_Total DOUBLE," +
                     "PRIMARY KEY (TUID));");
 
-//            state.executeUpdate("CREATE TRIGGER IF NOT EXISTS Add_Order_Details" +
-//                    "AFTER INSERT ON Order_Table" +
-//                    "BEGIN" +
-//                    "" +
-//                    "END;");
         }
     }
 
@@ -54,7 +49,7 @@ public class OrderDB {
             return false;
     }
 
-    public static boolean addOrder(int TUID, int Customer_TUID) throws SQLException {
+    public static boolean addOrder(int TUID, int Customer_TUID) throws SQLException, ClassNotFoundException {
         if (!databaseExists())
             buildDatabase();
 
@@ -66,6 +61,8 @@ public class OrderDB {
             prep = con.prepareStatement("INSERT INTO Order_Table VALUES(?,?,?,?,?);");
             prep.setInt(1, TUID);
             prep.setInt(2, Customer_TUID);
+            prep.setString(3, Scheduler.nextDeliveryTime());
+            prep.setInt(4, Scheduler.assignDeliveryPerson());
             prep.setDouble(5, orderTotalCost.getDouble("total_cost"));
         } else {
             prep = con.prepareStatement("UPDATE Order_Table SET Order_Total = ? WHERE TUID = ?;");
