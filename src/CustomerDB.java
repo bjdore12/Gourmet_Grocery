@@ -37,7 +37,7 @@ public class CustomerDB {
         }
     }
 
-    public static boolean addCustomer(int TUID, String firstName, String lastName, String phone) throws SQLException, ClassNotFoundException {
+    public static boolean addCustomer(int TUID, String firstName, String lastName, String phone) throws SQLException {
         if (!databaseExists())
             buildDatabase();
 
@@ -60,7 +60,7 @@ public class CustomerDB {
         ResultSet res;
 
         state = con.createStatement();
-        res = state.executeQuery("SELECT TUID, First_Name, Last_Name, Phone FROM Customer_Table");
+        res = state.executeQuery("SELECT * FROM Customer_Table");
         return res;
     }
 
@@ -72,7 +72,7 @@ public class CustomerDB {
         ResultSet res;
 
         state = con.createStatement();
-        res = state.executeQuery("SELECT TUID, First_Name, Last_Name, Phone FROM Customer_Table WHERE TUID = " + TUID);
+        res = state.executeQuery("SELECT * FROM Customer_Table WHERE TUID = " + TUID);
         return res;
     }
 
@@ -84,7 +84,7 @@ public class CustomerDB {
         ResultSet res;
 
         state = con.createStatement();
-        res = state.executeQuery("SELECT TUID, First_Name, Last_Name, Phone FROM Customer_Table WHERE TUID = " + TUID);
+        res = state.executeQuery("SELECT * FROM Customer_Table WHERE TUID = " + TUID);
         if (res.next())
             return true;
         else

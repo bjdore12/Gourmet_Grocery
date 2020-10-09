@@ -1,5 +1,3 @@
-import org.omg.PortableServer.RequestProcessingPolicy;
-
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -27,8 +25,10 @@ public class MainExecution {
         System.out.println("\nDo you want to run the file 'gourmet.txt'? (Y/N)");
         String userChoice = userInput.next().toUpperCase();
 
-        if (userChoice.equals("Y"))
+        if (userChoice.equals("Y")) {
             TextFileParser.readFile("gourmet.txt");
+            userInput.nextLine();
+        }
         else {
             readUserSelectedFile(userInput);
         }
@@ -36,7 +36,6 @@ public class MainExecution {
         // Program will loop below, allowing the user to keep choosing options in the program.
         // Program execution ends when the user types the 'Exit' command.
 
-        userInput.nextLine();   // TODO: There's a super small bug here, user has to hit enter twice if choosing to run their own file
         while(!userChoice.equals("exit")) {
             System.out.print("Please type an option as shown below (1/2/3/4/5/6):\n");
             System.out.print("\t1 --> Run Inventory Report (Type 1)\n");
@@ -56,31 +55,16 @@ public class MainExecution {
                 Reporter.displayCustomerLog();
             }
             if (userChoice.equals("3")) {
-                Reporter.printFullOrderSummary();
+                String[] dateRanges = getDateRangeFromUser(userInput);
+                Reporter.printFullOrderSummary(dateRanges[0], dateRanges[1]);
             }
             if (userChoice.equals("4")) {
-                System.out.print("Enter begin date ("+OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate")+"): ");
-                String beginDate = userInput.nextLine();
-
-                System.out.print("Enter end date ("+OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate")+"): ");
-                String endDate = userInput.nextLine();
-
-                beginDate = beginDate.equals("") ? OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate") : beginDate;
-                endDate = endDate.equals("") ? OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") : endDate;
-
-                Reporter.printOrderDeliveryTimes(beginDate, endDate);
+                String[] dateRanges = getDateRangeFromUser(userInput);
+                Reporter.printOrderDeliveryTimes(dateRanges[0], dateRanges[1]);
             }
             if (userChoice.equals("5")) {
-                System.out.print("Enter begin date ("+OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate")+"): ");
-                String beginDate = userInput.nextLine();
-
-                System.out.print("Enter end date ("+OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate")+"): ");
-                String endDate = userInput.nextLine();
-
-                beginDate = beginDate.equals("") ? OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate") : beginDate;
-                endDate = endDate.equals("") ? OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") : endDate;
-
-                Reporter.printEmployeeEarnings(beginDate, endDate);
+                String[] dateRanges = getDateRangeFromUser(userInput);
+                Reporter.printEmployeeEarnings(dateRanges[0], dateRanges[1]);
             }
             if (userChoice.equals("6")) {
                 readUserSelectedFile(userInput);
@@ -89,9 +73,35 @@ public class MainExecution {
     }
 
     public static void readUserSelectedFile(Scanner userInput) throws FileNotFoundException, SQLException, ClassNotFoundException {
-        System.out.print("\nPlease type a file to run: ");
+        System.out.print("\nPlease type a file to run (Type 'N' to cancel): ");
         String userFile = userInput.next();
-        TextFileParser.readFile(userFile);
-        if(userInput.hasNextLine()) userInput.nextLine();
+        if (!(userFile.equals("n") || userFile.equals("N"))) {
+            TextFileParser.readFile(userFile);
+            if(userInput.hasNextLine()) userInput.nextLine();
+        }
+    }
+
+    public static String[] getDateRangeFromUser(Scanner userInput) throws SQLException {
+        String beginDate;
+        String endDate;
+
+        System.out.print("Do you want to enter a date range? (Y/N): ");
+        String inputRange = userInput.nextLine().toUpperCase();
+
+        if (inputRange.equals("Y")) {
+            System.out.print("Enter begin date (YYYY-MM-DD): ");
+            beginDate = userInput.nextLine();
+
+            System.out.print("Enter end date (YYYY-MM-DD): ");
+            endDate = userInput.nextLine();
+
+            beginDate = beginDate.equals("") ? OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate") : beginDate;
+            endDate = endDate.equals("") ? OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") : endDate;
+        } else {
+            beginDate = OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate");
+            endDate = OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate");
+        }
+
+        return new String[]{beginDate, endDate};
     }
 }

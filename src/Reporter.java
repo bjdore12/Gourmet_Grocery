@@ -31,14 +31,15 @@ public class Reporter {
         System.out.println();
     }
 
-    public static void printFullOrderSummary() throws SQLException, ClassNotFoundException {
+    public static void printFullOrderSummary(String beginDate, String endDate) throws SQLException, ClassNotFoundException {
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        ResultSet orderSummary = OrderDB.getOrders();
+        ResultSet orderSummary = OrderDB.getOrders(beginDate, endDate);
         ResultSet customerInfo;
 
         System.out.println("\n-------------------------------------------");
         System.out.println("| Customer Order Summary and Costs Report |");
         System.out.println("-------------------------------------------");
+        System.out.println("From: " + beginDate + " To: " + endDate);
         while(orderSummary.next()) {
             customerInfo = CustomerDB.getCustomers(orderSummary.getInt("Customer_TUID"));
             int orderQuantity = InventoryToOrderDB.getOrderTotalQuantity(orderSummary.getInt("TUID"));
@@ -65,7 +66,7 @@ public class Reporter {
 
         System.out.println("\n-----------------------------");
         System.out.println("| Delivery Schedules Report |");
-        System.out.println("-----------------------------");
+        System.out.println("-----------------------------\n");
         System.out.printf("\n%-9s %-15s %-15s %-20s %-17s\n", "Order ID", "Customer - FN", "Customer - LN", "Delivery Date/Time", "Delivery Person");
         System.out.println("---------------------------------------------------------------------------");
         while(orderSummary.next()) {
@@ -91,7 +92,8 @@ public class Reporter {
         System.out.println("\n-----------------------------");
         System.out.println("| Delivery Schedules Report |");
         System.out.println("-----------------------------");
-        System.out.printf("%-9s %-15s %-15s %-20s %-17s\n", "Order ID", "Customer - FN", "Customer - LN", "Delivery Date/Time", "Delivery Person");
+        System.out.println("From: " + beginDate + " To: " + endDate);
+        System.out.printf("\n%-9s %-15s %-15s %-20s %-17s\n", "Order ID", "Customer - FN", "Customer - LN", "Delivery Date/Time", "Delivery Person");
         System.out.println("---------------------------------------------------------------------------");
         while(orderSummary.next()) {
             customerInfo = CustomerDB.getCustomers(orderSummary.getInt("Customer_TUID"));
@@ -200,10 +202,5 @@ public class Reporter {
         catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        printEmployeeEarnings("2020-10-10", "2020-10-11");
-        //printEmployeeEarnings("2020-10-10", "2020-10-11");
     }
 }

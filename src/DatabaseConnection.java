@@ -5,13 +5,13 @@ public class DatabaseConnection {
 
     static {
         try {
-            con = getConnection();
+            con = connect();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
-    private static Connection getConnection() throws  SQLException {
+    private static Connection connect() throws  SQLException {
         // Database path -- if it's new database, it will be created in the project folder
         return DriverManager.getConnection("jdbc:sqlite:SQLiteGG.db");
     }

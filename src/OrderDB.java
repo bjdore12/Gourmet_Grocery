@@ -117,7 +117,20 @@ public class OrderDB {
         ResultSet res;
 
         state = con.createStatement();
-        res = state.executeQuery("SELECT MIN(Delivery_Date_Time) AS earliestDeliveryDate FROM Order_Table;");
+        res = state.executeQuery("SELECT DATE(MIN(Delivery_Date_Time)) AS earliestDeliveryDate FROM Order_Table;");
+        return res;
+    }
+
+
+    public static ResultSet getLastestDeliveryDate() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT DATE(MAX(Delivery_Date_Time)) AS latestDeliveryDate FROM Order_Table;");
         return res;
     }
 
@@ -184,18 +197,6 @@ public class OrderDB {
                 "WHERE Order_Table.DeliveryPerson_TUID = DeliveryPerson_Table.TUID\n" +
                 "AND (DATE(Delivery_Date_Time) >= DATE('"+ beginDate +"')) AND (DATE(Delivery_Date_Time) <= DATE('"+ endDate +"'));\n");
 
-        return res;
-    }
-
-    public static ResultSet getLastestDeliveryDate() throws SQLException {
-        if (!databaseExists())
-            buildDatabase();
-
-        Statement state;
-        ResultSet res;
-
-        state = con.createStatement();
-        res = state.executeQuery("SELECT MAX(Delivery_Date_Time) AS latestDeliveryDate FROM Order_Table;");
         return res;
     }
 

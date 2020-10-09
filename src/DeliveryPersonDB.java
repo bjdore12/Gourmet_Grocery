@@ -7,7 +7,7 @@ public class DeliveryPersonDB {
         con = DatabaseConnection.getDBConnection();
     }
 
-    public static boolean databaseExists() throws SQLException, ClassNotFoundException {
+    public static boolean databaseExists() throws SQLException {
         Statement state;
         ResultSet res;
 
@@ -21,7 +21,7 @@ public class DeliveryPersonDB {
             return false;
     }
 
-    public static void buildDatabase() throws ClassNotFoundException, SQLException {
+    public static void buildDatabase() throws SQLException {
         Statement state;
 
         if (!databaseExists()) {
@@ -56,7 +56,7 @@ public class DeliveryPersonDB {
         prep.execute();
     }
 
-    public static ResultSet getDeliveryPersons() throws SQLException, ClassNotFoundException {
+    public static ResultSet getDeliveryPersons() throws SQLException {
         if (!databaseExists())
             buildDatabase();
 
@@ -64,11 +64,11 @@ public class DeliveryPersonDB {
         ResultSet res;
 
         state = con.createStatement();
-        res = state.executeQuery("SELECT TUID, Name, Pay_Rate,  FROM DeliveryPerson_Table");
+        res = state.executeQuery("SELECT *  FROM DeliveryPerson_Table");
         return res;
     }
 
-    public static ResultSet getDeliveryPersons(int TUID) throws SQLException, ClassNotFoundException {
+    public static ResultSet getDeliveryPersons(int TUID) throws SQLException {
         if (!databaseExists())
             buildDatabase();
 

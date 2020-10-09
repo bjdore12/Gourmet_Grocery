@@ -40,7 +40,6 @@ public class InventoryDB {
     }
 
     private static void populateInventory() throws SQLException {
-        PreparedStatement prep;
 
         addInventoryItem(101, "Peanut Butter – Chunky", 100, 10.00);
         addInventoryItem(102, "Peanut Butter – Smooth", 100, 11.00);
