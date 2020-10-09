@@ -148,6 +148,23 @@ public class OrderDB {
         return res;
     }
 
+    public static ResultSet getLastestDeliveryDateTimeSlots() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        String latestDate = getLastestDeliveryDate().getString("latestDeliveryDate");
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT TIME(Delivery_Date_Time) As deliveryTime, COUNT(TIME(Delivery_Date_Time)) AS count, DATE(Delivery_Date_Time) AS deliveryDate\n" +
+                "FROM Order_Table\n" +
+                "WHERE DATE(Delivery_Date_Time) == DATE('"+latestDate+"')\n" +
+                "GROUP BY TIME(Delivery_Date_Time);");
+        return res;
+    }
+
     public static ResultSet getEmpPayPerDelivery(String beginDate, String endDate) throws SQLException {
         if (!databaseExists())
             buildDatabase();
@@ -236,5 +253,12 @@ public class OrderDB {
         prep = con.prepareStatement("DELETE FROM Order_Table WHERE TUID = ?");
         prep.setInt(1, TUID);
         return prep.execute();
+    }
+
+    public static void main(String[] args) throws SQLException {
+        ResultSet res = getLastestDeliveryDateTimeSlots();
+        while(res.next()) {
+            System.out.println(res.getString("deliveryTimes") + " : " + res.getString("count"));
+        }
     }
 }

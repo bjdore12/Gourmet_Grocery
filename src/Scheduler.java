@@ -1,3 +1,5 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.LinkedList;
@@ -16,12 +18,20 @@ public class Scheduler {
     private static int timeFourSlots = 2;
 
     private static LocalTime currentDeliveryTime = DELIVERY_TIME_ONE;
-    private static LocalDate currentDeliveryDate = LocalDate.now().plusDays(1);     // TODO: currentDeliveryDate needs to always be the recent date in Order_Table
+    private static LocalDate currentDeliveryDate;     // TODO: currentDeliveryDate needs to always be the recent date in Order_Table
+
+    private static boolean deliveryPersonToggle = false;
+
+    static {
+        try {
+            currentDeliveryDate = getLatestDeliveryTime();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 
     private static Queue<String> cancelledOrderDates = new LinkedList<>();
     private static Queue<Integer> cancelledOrderAssociatedDeliveryPersons = new LinkedList<>();
-
-    private static boolean deliveryPersonToggle = false;
 
     public static int assignDeliveryPerson() {
         if (!cancelledOrderAssociatedDeliveryPersons.isEmpty())
@@ -82,5 +92,57 @@ public class Scheduler {
 
     public static LocalDate incrementDays(LocalDate date) {
         return date.plusDays(1);
+    }
+
+    public static boolean decrementTimeSlotsOnStartup() throws SQLException {
+        ResultSet res = OrderDB.getLastestDeliveryDateTimeSlots();
+
+        while (res.next()) {
+            String timeSlot = res.getString("deliveryTime");
+            int count = res.getInt("count");
+
+            if (timeSlot.equals("09:00:00")) {
+                timeOneSlots -= count;
+                for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
+            }
+
+            if (timeSlot.equals("11:00:00")) {
+                timeTwoSlots -= count;
+                for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
+            }
+
+            if (timeSlot.equals("14:00:00")) {
+                timeThreeSlots -= count;
+                for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
+            }
+
+
+            if (timeSlot.equals("16:00:00")) {
+                timeFourSlots -= count;
+                for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
+            }
+        }
+        return deliveryPersonToggle;
+    }
+
+    public static LocalDate getLatestDeliveryTime() throws SQLException {
+        LocalDate latest;
+        if (OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") != null) {
+            String[] latestDate = OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate").split("-");
+            latest = LocalDate.of(Integer.parseInt(latestDate[0]), Integer.parseInt(latestDate[1]), Integer.parseInt(latestDate[2]));
+            decrementTimeSlotsOnStartup();
+        } else {
+            latest = LocalDate.now().plusDays(1);
+        }
+        return latest;
+    }
+
+    public static void main(String[] args) {
+
+            System.out.println(currentDeliveryTime);
+            System.out.println("Time one: " + timeOneSlots);
+            System.out.println("Time two: " + timeTwoSlots);
+            System.out.println("Time three: " + timeThreeSlots);
+            System.out.println("Time four: " + timeFourSlots);
     }
 }
