@@ -11,14 +11,13 @@ public class Scheduler {
     final private static LocalTime DELIVERY_TIME_THREE = LocalTime.of(14,00);
     final private static LocalTime DELIVERY_TIME_FOUR = LocalTime.of(16, 00);
 
-    // TODO: These timeslots reset once program execution ends, this could lead to an issue where delivery time slots are overassigned.
     private static int timeOneSlots = 2;
     private static int timeTwoSlots = 2;
     private static int timeThreeSlots = 2;
     private static int timeFourSlots = 2;
 
     private static LocalTime currentDeliveryTime = DELIVERY_TIME_ONE;
-    private static LocalDate currentDeliveryDate;     // TODO: currentDeliveryDate needs to always be the recent date in Order_Table
+    private static LocalDate currentDeliveryDate;
 
     private static boolean deliveryPersonToggle = false;
 
@@ -54,7 +53,7 @@ public class Scheduler {
         cancelledOrderAssociatedDeliveryPersons.offer(deliveryPerson);
     }
 
-    public static void loadExistingOrderDatesFromDatabase() {
+    public static void loadExistingOrderDatesFromDatabaseOnStartup() {
         // TODO: We need a way to get back all of the cancelled order dates that may exist after program execution ends
     }
 
@@ -94,6 +93,8 @@ public class Scheduler {
         return date.plusDays(1);
     }
 
+    // For the latest delivery date, check each time slot and see how many have already been filled.
+    // Subtract the used slots from avaliable and flip the delivery person as such.
     public static boolean decrementTimeSlotsOnStartup() throws SQLException {
         ResultSet res = OrderDB.getLastestDeliveryDateTimeSlots();
 
@@ -125,6 +126,8 @@ public class Scheduler {
         return deliveryPersonToggle;
     }
 
+    // Look for the latest delivery date in the Order_Table, if none exists, the latest delivery date is tomorrow.
+    // If the table includes the latest delivery date, then check to see if there are any open time slots on that day.
     public static LocalDate getLatestDeliveryTime() throws SQLException {
         LocalDate latest;
         if (OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") != null) {
