@@ -109,6 +109,30 @@ public class OrderDB {
         return res;
     }
 
+    public static ResultSet getEarliestDeliveryDate() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT MIN(Delivery_Date_Time) AS earliestDeliveryDate FROM Order_Table;");
+        return res;
+    }
+
+    public static ResultSet getLastestDeliveryDate() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT MAX(Delivery_Date_Time) AS latestDeliveryDate FROM Order_Table;");
+        return res;
+    }
+
     public static void resetOrders() throws SQLException {
         if (!databaseExists())
             buildDatabase();

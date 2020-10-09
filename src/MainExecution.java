@@ -59,8 +59,16 @@ public class MainExecution {
                 Reporter.printFullOrderSummary();
             }
             if (userChoice.equals("4")) {
-                // TODO: Must implement function to run Delivery Schedules report
-                Reporter.printOrderDeliveryTimes();
+                System.out.print("Enter begin date ("+OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate")+"): ");
+                String beginDate = userInput.nextLine();
+
+                System.out.print("Enter end date ("+OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate")+"): ");
+                String endDate = userInput.nextLine();
+
+                beginDate = beginDate.equals("") ? OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate") : beginDate;
+                endDate = endDate.equals("") ? OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") : endDate;
+
+                Reporter.printOrderDeliveryTimes(beginDate, endDate);
             }
             if (userChoice.equals("5")) {
                 // TODO: Must implement function to run Employee Earning reports
