@@ -48,6 +48,8 @@ public class MainExecution {
 
             userChoice = userInput.nextLine().toLowerCase();
 
+            // TODO: We need a way (that makes sense) to show the default date ranges for reports that require a date range
+
             if (userChoice.equals("1")) {
                 Reporter.displayCurrentInventory();
             }
@@ -56,7 +58,14 @@ public class MainExecution {
             }
             if (userChoice.equals("3")) {
                 String[] dateRanges = getDateRangeFromUser(userInput);
-                Reporter.printFullOrderSummary(dateRanges[0], dateRanges[1]);
+                System.out.print("Do you want the Order Summary or Full Order Details (S/D):");
+                String sumOrDet = userInput.nextLine().toLowerCase();
+                if (sumOrDet.equals("s")) {
+                    Reporter.printOrderSummary(dateRanges[0], dateRanges[1]);
+                } else if (sumOrDet.equals("d")) {
+                    Reporter.printFullOrderSummary(dateRanges[0], dateRanges[1]);
+                }
+
             }
             if (userChoice.equals("4")) {
                 String[] dateRanges = getDateRangeFromUser(userInput);
@@ -85,14 +94,14 @@ public class MainExecution {
         String beginDate;
         String endDate;
 
-        System.out.print("Do you want to enter a date range? (Y/N): ");
+        System.out.print("Do you want to enter a date range for the report? (Y/N): ");
         String inputRange = userInput.nextLine().toUpperCase();
 
         if (inputRange.equals("Y")) {
-            System.out.print("Enter begin date (YYYY-MM-DD): ");
+            System.out.print("Enter inclusive begin date (YYYY-MM-DD): ");
             beginDate = userInput.nextLine();
 
-            System.out.print("Enter end date (YYYY-MM-DD): ");
+            System.out.print("Enter inclusive end date (YYYY-MM-DD): ");
             endDate = userInput.nextLine();
 
             beginDate = beginDate.equals("") ? OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate") : beginDate;

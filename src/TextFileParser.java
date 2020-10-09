@@ -34,7 +34,6 @@ public class TextFileParser {
             InventoryToOrderDB.modifyOrderToInventory(Integer.parseInt(fields[2]), Integer.parseInt(fields[3]), Integer.parseInt(fields[4]));
             OrderDB.addOrder(Integer.parseInt(fields[2]), Integer.parseInt(fields[1]));
             InventoryToOrderDB.deleteInvToOrderAssocationIfZeroQuantity(Integer.parseInt(fields[2]));
-           // InventoryToOrderDB.deleteAssociation(Integer.parseInt(fields[2]), Integer.parseInt(fields[3]));
         }
     }
 

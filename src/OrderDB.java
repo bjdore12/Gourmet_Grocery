@@ -85,7 +85,7 @@ public class OrderDB {
         return res;
     }
 
-    public static ResultSet getOrders(String beginDate, String endDate) throws SQLException {
+    public static ResultSet getOrders(String beginDate, String endDate, String sortCriteria) throws SQLException {
         if (!databaseExists())
             buildDatabase();
 
@@ -93,7 +93,7 @@ public class OrderDB {
         ResultSet res;
 
         state = con.createStatement();
-        res = state.executeQuery("SELECT * FROM Order_Table WHERE DATE(\"Delivery_Date_Time\") >= DATE('" + beginDate + "') AND DATE(\"Delivery_Date_Time\") <= DATE('" + endDate + "') GROUP BY TUID");
+        res = state.executeQuery("SELECT * FROM Order_Table WHERE DATE(\"Delivery_Date_Time\") >= DATE('" + beginDate + "') AND DATE(\"Delivery_Date_Time\") <= DATE('" + endDate + "') GROUP BY TUID ORDER BY " + sortCriteria);
         return res;
     }
 
@@ -106,6 +106,20 @@ public class OrderDB {
 
         state = con.createStatement();
         res = state.executeQuery("SELECT * FROM Order_Table WHERE TUID = " + TUID);
+        return res;
+    }
+
+    public static ResultSet getAllOrderTotalCost(String beginDate, String endDate) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT SUM(Order_Total) AS totalSales \n" +
+                "FROM Order_Table \n" +
+                "WHERE DATE(Delivery_Date_Time) >= DATE('"+beginDate+"') AND DATE(\"Delivery_Date_Time\") <= DATE('"+endDate+"');");
         return res;
     }
 
