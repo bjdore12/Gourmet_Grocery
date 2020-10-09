@@ -53,7 +53,7 @@ public class Scheduler {
         cancelledOrderAssociatedDeliveryPersons.offer(deliveryPerson);
     }
 
-    public static void loadExistingOrderDatesFromDatabaseOnStartup() {
+    public static void loadCancelledOrderDatesFromDatabaseOnStartup() {
         // TODO: We need a way to get back all of the cancelled order dates that may exist after program execution ends
     }
 
@@ -116,7 +116,6 @@ public class Scheduler {
                 timeThreeSlots -= count;
                 for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
             }
-
 
             if (timeSlot.equals("16:00:00")) {
                 timeFourSlots -= count;
