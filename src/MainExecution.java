@@ -36,7 +36,7 @@ public class MainExecution {
         // Program will loop below, allowing the user to keep choosing options in the program.
         // Program execution ends when the user types the 'Exit' command.
 
-        userInput.nextLine();
+        userInput.nextLine();   // TODO: There's a super small bug here, user has to hit enter twice if choosing to run their own file
         while(!userChoice.equals("exit")) {
             System.out.print("Please type an option as shown below (1/2/3/4/5/6):\n");
             System.out.print("\t1 --> Run Inventory Report (Type 1)\n");
@@ -50,10 +50,10 @@ public class MainExecution {
             userChoice = userInput.nextLine().toLowerCase();
 
             if (userChoice.equals("1")) {
-                InventoryDB.displayCurrentInventory();
+                Reporter.displayCurrentInventory();
             }
             if (userChoice.equals("2")) {
-                CustomerDB.displayCustomerLog();
+                Reporter.displayCustomerLog();
             }
             if (userChoice.equals("3")) {
                 Reporter.printFullOrderSummary();
@@ -71,8 +71,16 @@ public class MainExecution {
                 Reporter.printOrderDeliveryTimes(beginDate, endDate);
             }
             if (userChoice.equals("5")) {
-                // TODO: Must implement function to run Employee Earning reports
-                System.out.println("COMING SOON - Employee Earnings Report");
+                System.out.print("Enter begin date ("+OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate")+"): ");
+                String beginDate = userInput.nextLine();
+
+                System.out.print("Enter end date ("+OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate")+"): ");
+                String endDate = userInput.nextLine();
+
+                beginDate = beginDate.equals("") ? OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate") : beginDate;
+                endDate = endDate.equals("") ? OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") : endDate;
+
+                Reporter.printEmployeeEarnings(beginDate, endDate);
             }
             if (userChoice.equals("6")) {
                 readUserSelectedFile(userInput);

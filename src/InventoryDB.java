@@ -4,7 +4,6 @@ import java.text.NumberFormat;
 public class InventoryDB {
 
     private static Connection con;
-    private static NumberFormat formatter = NumberFormat.getCurrencyInstance();
     static {
         con = DatabaseConnection.getDBConnection();
     }
@@ -124,30 +123,6 @@ public class InventoryDB {
 
         } else {
             return false;
-        }
-    }
-
-    public static void displayCurrentInventory() {
-        ResultSet rs;
-        try {
-            // Bring back the set of user from the database
-            rs = InventoryDB.displayInventory();
-            // Iterate over the resultset, print out each record's details
-
-            System.out.printf("\n%-5s %-25s %-9s %s\n", "TUID", "Item", "Quantity", "Unit Price");
-            System.out.println("-------------------------------------------------------------");
-
-            while (rs.next()) {
-                System.out.printf("%-5d %-25s %-9s %s\n", rs.getInt("TUID"),
-                        rs.getString("Item_Name"),
-                        rs.getString("Quantity"),
-                        formatter.format(rs.getDouble("Unit_Price")));
-            }
-            System.out.println("-------------------------------------------------------------\n");
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

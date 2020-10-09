@@ -121,6 +121,72 @@ public class OrderDB {
         return res;
     }
 
+    public static ResultSet getEmpPayPerDelivery(String beginDate, String endDate) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT DATE(Delivery_Date_Time) AS orderDate, Name As empName, SUM(Pay_Rate) As dailyPay\n" +
+                "FROM Order_Table, DeliveryPerson_Table\n" +
+                "WHERE Order_Table.DeliveryPerson_TUID = DeliveryPerson_Table.TUID\n" +
+                "AND (DATE(Delivery_Date_Time) >= DATE('"+ beginDate +"')) AND (DATE(Delivery_Date_Time) <= DATE('"+ endDate +"'))\n" +
+                "GROUP BY orderDate, Name ORDER BY Name;;");
+
+        return res;
+    }
+
+    public static ResultSet getEmpPayPerDelivery() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT DATE(Delivery_Date_Time) AS orderDate, Name As empName, SUM(Pay_Rate) As dailyPay\n" +
+                "FROM Order_Table, DeliveryPerson_Table\n" +
+                "WHERE Order_Table.DeliveryPerson_TUID = DeliveryPerson_Table.TUID\n" +
+                "GROUP BY orderDate, Name;");
+
+        return res;
+    }
+
+    public static ResultSet getEmpTotalPay(String beginDate, String endDate) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT Name As empName, SUM(Pay_Rate) As dailyPay\n" +
+                "FROM Order_Table, DeliveryPerson_Table\n" +
+                "WHERE Order_Table.DeliveryPerson_TUID = DeliveryPerson_Table.TUID\n" +
+                "AND (DATE(Delivery_Date_Time) >= DATE('"+ beginDate +"')) AND (DATE(Delivery_Date_Time) <= DATE('"+ endDate +"'))\n" +
+                "GROUP BY Name;");
+
+        return res;
+    }
+
+    public static ResultSet getEmpAggregateTotalPay(String beginDate, String endDate) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT SUM(Pay_Rate) As dailyPay\n" +
+                "FROM Order_Table, DeliveryPerson_Table\n" +
+                "WHERE Order_Table.DeliveryPerson_TUID = DeliveryPerson_Table.TUID\n" +
+                "AND (DATE(Delivery_Date_Time) >= DATE('"+ beginDate +"')) AND (DATE(Delivery_Date_Time) <= DATE('"+ endDate +"'));\n");
+
+        return res;
+    }
+
     public static ResultSet getLastestDeliveryDate() throws SQLException {
         if (!databaseExists())
             buildDatabase();
