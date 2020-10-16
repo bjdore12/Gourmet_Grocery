@@ -208,6 +208,18 @@ public class OrderDB {
         return res;
     }
 
+    public static ResultSet getLastestDeliveryTime() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT TIME(MAX(Delivery_Date_Time)) AS latestDeliveryTime FROM Order_Table;");
+        return res;
+    }
+
     public static ResultSet getLastestDeliveryDateTimeSlots() throws SQLException {
         if (!databaseExists())
             buildDatabase();

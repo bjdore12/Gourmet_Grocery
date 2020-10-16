@@ -57,7 +57,6 @@ public class MainExecution {
 
             userChoice = userInput.nextLine().toLowerCase();
 
-            // TODO: We need a way (that makes sense) to show the default date ranges for reports that require a date range
             if (userChoice.equals("1")) {
                 Reporter.displayCurrentInventory();
             }

@@ -32,8 +32,8 @@ public class Scheduler {
     private static Queue<Integer> cancelledOrderAssociatedDeliveryPersons = new LinkedList<>();
 
     public static int assignDeliveryPerson() {
-        if (!cancelledOrderAssociatedDeliveryPersons.isEmpty())
-            return cancelledOrderAssociatedDeliveryPersons.poll();
+        if (!cancelledOrderDates.isEmpty())
+            return Integer.parseInt(cancelledOrderDates.remove(0).split(",")[1]);
 
         int assignedDeliveryPerson;
 
@@ -47,9 +47,9 @@ public class Scheduler {
         return assignedDeliveryPerson;
     }
 
-    public static void cancelDelivery(String dateAndTime, Integer deliveryPerson) {
-        cancelledOrderDates.add(dateAndTime);
-        cancelledOrderAssociatedDeliveryPersons.offer(deliveryPerson);
+    public static void cancelDelivery(String dateAndTime, int deliveryPerson) {
+        cancelledOrderDates.add(dateAndTime + "," + deliveryPerson);
+        //cancelledOrderAssociatedDeliveryPersons.offer(deliveryPerson);
     }
 
     public static void loadCancelledOrderDatesFromDatabaseOnStartup() throws SQLException {
@@ -96,6 +96,7 @@ public class Scheduler {
 
             expectedDate = incrementDays(expectedDate);
         }
+        //decrementTimeSlotsOnStartup();
     }
 
     private static void addMissingDeliveryTimesToQueueForPastDates(String date, int timeOneAdds, int timeTwoAdds, int timeThreeAdds, int timeFourAdds) throws SQLException {
@@ -108,12 +109,10 @@ public class Scheduler {
                 deliveryPersonToggle = true;
             }
 
-            cancelledOrderDates.add(date + " 09:00");
-
             if (deliveryPersonToggle == false)
-                cancelledOrderAssociatedDeliveryPersons.offer(101);
+                cancelledOrderDates.add(date + " 09:00,"+101);
             else
-                cancelledOrderAssociatedDeliveryPersons.offer(102);
+                cancelledOrderDates.add(date + " 09:00,"+102);
 
             timeOneAdds--;
         }
@@ -126,12 +125,10 @@ public class Scheduler {
                 deliveryPersonToggle = true;
             }
 
-            cancelledOrderDates.add(date + " 11:00");
-
             if (deliveryPersonToggle == false)
-                cancelledOrderAssociatedDeliveryPersons.offer(101);
+                cancelledOrderDates.add(date + " 11:00,"+101);
             else
-                cancelledOrderAssociatedDeliveryPersons.offer(102);
+                cancelledOrderDates.add(date + " 11:00,"+102);
 
             timeTwoAdds--;
         }
@@ -144,12 +141,10 @@ public class Scheduler {
                 deliveryPersonToggle = true;
             }
 
-            cancelledOrderDates.add(date + " 14:00");
-
             if (deliveryPersonToggle == false)
-                cancelledOrderAssociatedDeliveryPersons.offer(101);
+                cancelledOrderDates.add(date + " 14:00,"+101);
             else
-                cancelledOrderAssociatedDeliveryPersons.offer(102);
+                cancelledOrderDates.add(date + " 14:00,"+102);
 
             timeThreeAdds--;
         }
@@ -162,12 +157,10 @@ public class Scheduler {
                 deliveryPersonToggle = true;
             }
 
-            cancelledOrderDates.add(date + " 16:00");
-
             if (deliveryPersonToggle == false)
-                cancelledOrderAssociatedDeliveryPersons.offer(101);
+                cancelledOrderDates.add(date + " 16:00,"+101);
             else
-                cancelledOrderAssociatedDeliveryPersons.offer(102);
+                cancelledOrderDates.add(date + " 16:00,"+102);
 
             timeFourAdds--;
         }
@@ -175,8 +168,9 @@ public class Scheduler {
 
     private static void addMissingDeliveryTimesToQueue(String date, int timeOneAdds, int timeTwoAdds, int timeThreeAdds, int timeFourAdds) throws SQLException {
 
+
         // Add missing 09:00 slot
-        while(timeOneAdds != 0) {
+        while (timeOneAdds != 0) {
             if (timeOneAdds == 2)
                 deliveryPersonToggle = false;
             else if (timeOneAdds == 1) {
@@ -188,22 +182,21 @@ public class Scheduler {
                     else
                         deliveryPersonToggle = false;
                 } catch (Exception ex) {
-                return;
+                    deliveryPersonToggle = true;
                 }
             }
 
-            cancelledOrderDates.add(date + " 09:00");
-
             if (deliveryPersonToggle == false)
-                cancelledOrderAssociatedDeliveryPersons.offer(101);
+                cancelledOrderDates.add(date + " 09:00," + 101);
             else
-                cancelledOrderAssociatedDeliveryPersons.offer(102);
+                cancelledOrderDates.add(date + " 09:00," + 102);
+
 
             timeOneAdds--;
         }
 
         // Add missing 11:00 slot
-        while(timeTwoAdds != 0) {
+        while (timeTwoAdds != 0) {
             if (timeTwoAdds == 2)
                 deliveryPersonToggle = false;
             else if (timeTwoAdds == 1) {
@@ -214,23 +207,20 @@ public class Scheduler {
                     else
                         deliveryPersonToggle = false;
                 } catch (Exception ex) {
-                    return;
+                    deliveryPersonToggle = true;
                 }
             }
 
-
-            cancelledOrderDates.add(date + " 11:00");
-
             if (deliveryPersonToggle == false)
-                cancelledOrderAssociatedDeliveryPersons.offer(101);
+                cancelledOrderDates.add(date + " 11:00," + 101);
             else
-                cancelledOrderAssociatedDeliveryPersons.offer(102);
+                cancelledOrderDates.add(date + " 11:00," + 102);
 
             timeTwoAdds--;
         }
 
         // Add missing 14:00 slot
-        while(timeThreeAdds != 0) {
+        while (timeThreeAdds != 0) {
             if (timeThreeAdds == 2)
                 deliveryPersonToggle = false;
             else if (timeThreeAdds == 1) {
@@ -241,23 +231,20 @@ public class Scheduler {
                     else
                         deliveryPersonToggle = false;
                 } catch (Exception ex) {
-                    return;
+                    deliveryPersonToggle = true;
                 }
             }
 
-
-            cancelledOrderDates.add(date + " 14:00");
-
             if (deliveryPersonToggle == false)
-                cancelledOrderAssociatedDeliveryPersons.offer(101);
+                cancelledOrderDates.add(date + " 14:00," + 101);
             else
-                cancelledOrderAssociatedDeliveryPersons.offer(102);
+                cancelledOrderDates.add(date + " 14:00," + 102);
 
             timeThreeAdds--;
         }
 
         // Add missing 16:00 slot
-        while(timeFourAdds != 0) {
+        while (timeFourAdds != 0) {
             if (timeFourAdds == 2)
                 deliveryPersonToggle = false;
             else if (timeFourAdds == 1) {
@@ -268,20 +255,20 @@ public class Scheduler {
                     else
                         deliveryPersonToggle = false;
                 } catch (Exception ex) {
-                    return;
+                    deliveryPersonToggle = true;
                 }
             }
 
-
-            cancelledOrderDates.add(date + " 16:00");
-
             if (deliveryPersonToggle == false)
-                cancelledOrderAssociatedDeliveryPersons.offer(101);
+                cancelledOrderDates.add(date + " 16:00," + 101);
             else
-                cancelledOrderAssociatedDeliveryPersons.offer(102);
+                cancelledOrderDates.add(date + " 16:00," + 102);
 
             timeFourAdds--;
         }
+
+        currentDeliveryDate = incrementDays(currentDeliveryDate);
+        deliveryPersonToggle = false;
     }
 
     public static String nextDeliveryTime() {
@@ -293,7 +280,7 @@ public class Scheduler {
                     return object1.compareTo(object2);
                 }
             });
-            return cancelledOrderDates.remove(0);
+            return cancelledOrderDates.get(0).split(",")[0];
         }
 
         if (currentDeliveryTime == DELIVERY_TIME_ONE && timeOneSlots == 0)
@@ -337,22 +324,22 @@ public class Scheduler {
             int count = res.getInt("count");
 
             if (timeSlot.equals("09:00:00")) {
-                timeOneSlots -= count;
+                timeOneSlots -= (timeOneSlots -= count) < 0 ? 0 : count;
                 for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
             }
 
             if (timeSlot.equals("11:00:00")) {
-                timeTwoSlots -= count;
+                timeTwoSlots -= (timeTwoSlots -= count) < 0 ? 0 : count;
                 for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
             }
 
             if (timeSlot.equals("14:00:00")) {
-                timeThreeSlots -= count;
+                timeThreeSlots -= (timeThreeSlots -= count) < 0 ? 0 : count;
                 for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
             }
 
             if (timeSlot.equals("16:00:00")) {
-                timeFourSlots -= count;
+                timeFourSlots -= (timeFourSlots -= count) < 0 ? 0 : count;
                 for (int i = 0; i < count; i++) deliveryPersonToggle = !deliveryPersonToggle;
             }
         }
@@ -366,7 +353,6 @@ public class Scheduler {
         if (OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") != null) {
             String[] latestDate = OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate").split("-");
             latest = LocalDate.of(Integer.parseInt(latestDate[0]), Integer.parseInt(latestDate[1]), Integer.parseInt(latestDate[2]));
-            decrementTimeSlotsOnStartup();
         } else {
             latest = LocalDate.now().plusDays(1);
         }
@@ -378,7 +364,6 @@ public class Scheduler {
         if (OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate") != null) {
             String[] earliestDate = OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate").split("-");
             earliestDateInDB = LocalDate.of(Integer.parseInt(earliestDate[0]), Integer.parseInt(earliestDate[1]), Integer.parseInt(earliestDate[2]));
-            decrementTimeSlotsOnStartup();
         } else {
             return LocalDate.now().plusDays(1);
         }
@@ -388,5 +373,10 @@ public class Scheduler {
     }
 
     public static void main(String[] args) throws SQLException {
+        String latestDate = OrderDB.getLastestDeliveryDate().getString("latestDeliveryDate");
+        String latestTime = OrderDB.getLastestDeliveryTime().getString("latestDeliveryTime");
+
+        System.out.println("DATE: " + latestDate);
+        System.out.println("TIME: " + latestTime);
     }
 }
