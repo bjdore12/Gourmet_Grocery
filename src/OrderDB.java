@@ -123,6 +123,50 @@ public class OrderDB {
         return res;
     }
 
+    public static ResultSet getAllDeliveryDates() throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT DATE(Delivery_Date_Time) AS deliveryDate\n" +
+                "FROM Order_Table\n" +
+                "GROUP BY DATE(Delivery_Date_Time)");
+        return res;
+    }
+
+    public static ResultSet getDeliveryTimesForADate(String date) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT TIME(Delivery_Date_Time) AS TIME, DeliveryPerson_TUID\n" +
+                "FROM Order_Table\n" +
+                "WHERE DATE(Delivery_Date_Time) = DATE('"+date+"')\n" +
+                "ORDER BY TIME(Delivery_Date_Time)");
+        return res;
+    }
+
+    public static ResultSet getDeliveryTimesForADate(String date, String time) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT COUNT(TIME(Delivery_Date_Time)) AS Time_Count\n" +
+                "FROM Order_Table\n" +
+                "WHERE DATE(Delivery_Date_Time) = DATE('"+date+"') AND TIME(Delivery_Date_Time) = TIME('"+time+"')\n" +
+                "ORDER BY TIME(Delivery_Date_Time)");
+        return res;
+    }
+
     public static ResultSet getEarliestDeliveryDate() throws SQLException {
         if (!databaseExists())
             buildDatabase();
@@ -256,9 +300,18 @@ public class OrderDB {
     }
 
     public static void main(String[] args) throws SQLException {
-        ResultSet res = getLastestDeliveryDateTimeSlots();
+        ResultSet res = getAllDeliveryDates();
         while(res.next()) {
-            System.out.println(res.getString("deliveryTimes") + " : " + res.getString("count"));
+            ResultSet timeOne = getDeliveryTimesForADate(res.getString("deliveryDate"), "09:00:00");
+            ResultSet timeTwo = getDeliveryTimesForADate(res.getString("deliveryDate"), "11:00:00");
+            ResultSet timeThree = getDeliveryTimesForADate(res.getString("deliveryDate"), "14:00:00");
+            ResultSet timeFour = getDeliveryTimesForADate(res.getString("deliveryDate"), "16:00:00");
+
+            System.out.println(res.getString("deliveryDate"));
+            System.out.println("\t" + timeOne.getString("Time_Count"));
+            System.out.println("\t" + timeTwo.getString("Time_Count"));
+            System.out.println("\t" + timeThree.getString("Time_Count"));
+            System.out.println("\t" + timeFour.getString("Time_Count"));
         }
     }
 }

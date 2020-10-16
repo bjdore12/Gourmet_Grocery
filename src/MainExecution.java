@@ -25,6 +25,8 @@ public class MainExecution {
         System.out.println("\nDo you want to run the file 'gourmet.txt'? (Y/N)");
         String userChoice = userInput.next().toUpperCase();
 
+        Scheduler.loadCancelledOrderDatesFromDatabaseOnStartup();
+
         if (userChoice.equals("Y")) {
             TextFileParser.readFile("gourmet.txt");
             userInput.nextLine();
@@ -32,6 +34,7 @@ public class MainExecution {
         else {
             readUserSelectedFile(userInput);
         }
+
 
         // Program will loop below, allowing the user to keep choosing options in the program.
         // Program execution ends when the user types the 'Exit' command.
@@ -86,8 +89,8 @@ public class MainExecution {
         String userFile = userInput.next();
         if (!(userFile.equals("n") || userFile.equals("N"))) {
             TextFileParser.readFile(userFile);
-            if(userInput.hasNextLine()) userInput.nextLine();
         }
+        if(userInput.hasNextLine()) userInput.nextLine();
     }
 
     public static String[] getDateRangeFromUser(Scanner userInput) throws SQLException {
