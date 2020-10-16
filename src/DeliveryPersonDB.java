@@ -26,7 +26,6 @@ public class DeliveryPersonDB {
 
         if (!databaseExists()) {
 
-            System.out.println("Building the Customer_Table table");
             state = con.createStatement();
             state.executeUpdate("CREATE TABLE DeliveryPerson_Table(" +
                     "TUID INTEGER," +
@@ -41,7 +40,6 @@ public class DeliveryPersonDB {
     private static void populateDeliveryPersons() throws SQLException {
 
         PreparedStatement prep;
-        System.out.println("Add records to Inventory_Table table");
 
         prep = con.prepareStatement("INSERT INTO DeliveryPerson_Table VALUES(?,?,?);");
         prep.setInt(1, 101);
