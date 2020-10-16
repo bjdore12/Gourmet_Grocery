@@ -12,7 +12,7 @@ public class MainExecution {
         if (resetInv.equals("Y"))
             InventoryDB.resetInventory();
 
-        System.out.println("Do you want to reset the customer and order tables to empty states? (Y/N)");
+        System.out.println("Do you want to reset the Customer and Order tables to empty states? (Y/N)");
         String resetCustAndOrds = userInput.next().toUpperCase();
 
         if (resetCustAndOrds.equals("Y")) {
@@ -32,7 +32,13 @@ public class MainExecution {
             userInput.nextLine();
         }
         else {
-            readUserSelectedFile(userInput);
+            try {
+                readUserSelectedFile(userInput);
+            } catch (Exception ex) {
+                System.out.println("\n\nFILE NOT FOUND: Make sure the file is in the same directory as the program");
+                System.out.println("\t- RETURNING TO MAIN MENU: Please try to process a file again\n\n");
+                userInput.nextLine();
+            }
         }
 
 
@@ -52,7 +58,6 @@ public class MainExecution {
             userChoice = userInput.nextLine().toLowerCase();
 
             // TODO: We need a way (that makes sense) to show the default date ranges for reports that require a date range
-
             if (userChoice.equals("1")) {
                 Reporter.displayCurrentInventory();
             }
@@ -61,14 +66,15 @@ public class MainExecution {
             }
             if (userChoice.equals("3")) {
                 String[] dateRanges = getDateRangeFromUser(userInput);
-                System.out.print("Do you want the Order Summary or Full Order Details (S/D):");
+                System.out.print("Do you want the Order Summary or Full Order Details? (S/D): ");
                 String sumOrDet = userInput.nextLine().toLowerCase();
                 if (sumOrDet.equals("s")) {
                     Reporter.printOrderSummary(dateRanges[0], dateRanges[1]);
                 } else if (sumOrDet.equals("d")) {
                     Reporter.printFullOrderSummary(dateRanges[0], dateRanges[1]);
+                } else {
+                    System.out.println("\n\nNo valid input for order type - cancelling...\n\n");
                 }
-
             }
             if (userChoice.equals("4")) {
                 String[] dateRanges = getDateRangeFromUser(userInput);
@@ -79,7 +85,13 @@ public class MainExecution {
                 Reporter.printEmployeeEarnings(dateRanges[0], dateRanges[1]);
             }
             if (userChoice.equals("6")) {
-                readUserSelectedFile(userInput);
+                try {
+                    readUserSelectedFile(userInput);
+                } catch (Exception ex) {
+                    System.out.println("\n\nFILE NOT FOUND: Make sure the file is in the same directory as the program");
+                    System.out.println("\t- RETURNING TO MAIN MENU: Please try to process a file again\n\n");
+                    userInput.nextLine();
+                }
             }
         }
     }
@@ -89,6 +101,8 @@ public class MainExecution {
         String userFile = userInput.next();
         if (!(userFile.equals("n") || userFile.equals("N"))) {
             TextFileParser.readFile(userFile);
+        } else {
+            System.out.println("\n\nCancelling...\n\n");
         }
         if(userInput.hasNextLine()) userInput.nextLine();
     }

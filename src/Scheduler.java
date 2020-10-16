@@ -2,8 +2,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Scheduler {
     final private static LocalTime DELIVERY_TIME_ONE = LocalTime.of(9,00);
@@ -29,7 +28,7 @@ public class Scheduler {
         }
     }
 
-    private static Queue<String> cancelledOrderDates = new LinkedList<>();
+    private static List<String> cancelledOrderDates = new LinkedList<>();
     private static Queue<Integer> cancelledOrderAssociatedDeliveryPersons = new LinkedList<>();
 
     public static int assignDeliveryPerson() {
@@ -49,7 +48,7 @@ public class Scheduler {
     }
 
     public static void cancelDelivery(String dateAndTime, Integer deliveryPerson) {
-        cancelledOrderDates.offer(dateAndTime);
+        cancelledOrderDates.add(dateAndTime);
         cancelledOrderAssociatedDeliveryPersons.offer(deliveryPerson);
     }
 
@@ -109,7 +108,7 @@ public class Scheduler {
                 deliveryPersonToggle = true;
             }
 
-            cancelledOrderDates.offer(date + " 09:00");
+            cancelledOrderDates.add(date + " 09:00");
 
             if (deliveryPersonToggle == false)
                 cancelledOrderAssociatedDeliveryPersons.offer(101);
@@ -127,7 +126,7 @@ public class Scheduler {
                 deliveryPersonToggle = true;
             }
 
-            cancelledOrderDates.offer(date + " 11:00");
+            cancelledOrderDates.add(date + " 11:00");
 
             if (deliveryPersonToggle == false)
                 cancelledOrderAssociatedDeliveryPersons.offer(101);
@@ -145,7 +144,7 @@ public class Scheduler {
                 deliveryPersonToggle = true;
             }
 
-            cancelledOrderDates.offer(date + " 14:00");
+            cancelledOrderDates.add(date + " 14:00");
 
             if (deliveryPersonToggle == false)
                 cancelledOrderAssociatedDeliveryPersons.offer(101);
@@ -163,7 +162,7 @@ public class Scheduler {
                 deliveryPersonToggle = true;
             }
 
-            cancelledOrderDates.offer(date + " 16:00");
+            cancelledOrderDates.add(date + " 16:00");
 
             if (deliveryPersonToggle == false)
                 cancelledOrderAssociatedDeliveryPersons.offer(101);
@@ -193,7 +192,7 @@ public class Scheduler {
                 }
             }
 
-            cancelledOrderDates.offer(date + " 09:00");
+            cancelledOrderDates.add(date + " 09:00");
 
             if (deliveryPersonToggle == false)
                 cancelledOrderAssociatedDeliveryPersons.offer(101);
@@ -220,7 +219,7 @@ public class Scheduler {
             }
 
 
-            cancelledOrderDates.offer(date + " 11:00");
+            cancelledOrderDates.add(date + " 11:00");
 
             if (deliveryPersonToggle == false)
                 cancelledOrderAssociatedDeliveryPersons.offer(101);
@@ -247,7 +246,7 @@ public class Scheduler {
             }
 
 
-            cancelledOrderDates.offer(date + " 14:00");
+            cancelledOrderDates.add(date + " 14:00");
 
             if (deliveryPersonToggle == false)
                 cancelledOrderAssociatedDeliveryPersons.offer(101);
@@ -274,7 +273,7 @@ public class Scheduler {
             }
 
 
-            cancelledOrderDates.offer(date + " 16:00");
+            cancelledOrderDates.add(date + " 16:00");
 
             if (deliveryPersonToggle == false)
                 cancelledOrderAssociatedDeliveryPersons.offer(101);
@@ -287,8 +286,15 @@ public class Scheduler {
 
     public static String nextDeliveryTime() {
 
-        if (!cancelledOrderDates.isEmpty())
-            return cancelledOrderDates.poll();
+        if (!cancelledOrderDates.isEmpty()) {
+            Collections.sort(cancelledOrderDates, new Comparator<String>() {
+                @Override
+                public int compare(String object1, String object2) {
+                    return object1.compareTo(object2);
+                }
+            });
+            return cancelledOrderDates.remove(0);
+        }
 
         if (currentDeliveryTime == DELIVERY_TIME_ONE && timeOneSlots == 0)
             currentDeliveryTime = DELIVERY_TIME_TWO;
@@ -382,6 +388,5 @@ public class Scheduler {
     }
 
     public static void main(String[] args) throws SQLException {
-        System.out.println(getEarliestDeliveryTime());
     }
 }
