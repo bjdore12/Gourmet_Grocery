@@ -54,44 +54,26 @@ public class Scheduler {
     }
 
     public static void loadCancelledOrderDatesFromDatabaseOnStartup() throws SQLException {
-        // TODO: We need a way to get back all of the cancelled order dates that may exist after program execution ends
-        ResultSet res1 = OrderDB.getAllDeliveryDates();
-        ResultSet res2 = OrderDB.getAllDeliveryDates();
+        ResultSet res = OrderDB.getAllDeliveryDates();
 
         LocalDate expectedDate = getEarliestDeliveryTime();
 
-        // If the expextedDate is less than the earliest date in the orders table.
-        while(res1.next()) {
+        if (OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate") != null) {
 
-            String date = res1.getString("deliveryDate");
-            if (expectedDate.toString().equals(date)) {
-                ResultSet timeOne = OrderDB.getDeliveryTimesForADate(date, "09:00:00");
-                ResultSet timeTwo = OrderDB.getDeliveryTimesForADate(date, "11:00:00");
-                ResultSet timeThree = OrderDB.getDeliveryTimesForADate(date, "14:00:00");
-                ResultSet timeFour = OrderDB.getDeliveryTimesForADate(date, "16:00:00");
+            String[] earliestDBDate = OrderDB.getEarliestDeliveryDate().getString("earliestDeliveryDate").split("-");
+            LocalDate earliestDBDateConvert = LocalDate.of(Integer.parseInt(earliestDBDate[0]), Integer.parseInt(earliestDBDate[1]), Integer.parseInt(earliestDBDate[2]));
 
-                int countOfTimeOne = Integer.parseInt(timeOne.getString("Time_Count"));
-                int countOfTimeTwo = Integer.parseInt(timeTwo.getString("Time_Count"));
-                int countOfTimeThree = Integer.parseInt(timeThree.getString("Time_Count"));
-                int countOfTimeFour = Integer.parseInt(timeFour.getString("Time_Count"));
-
-                int timeOneAdds = Math.abs(countOfTimeOne - 2);
-                int timeTwoAdds = Math.abs(countOfTimeTwo - 2);
-                int timeThreeAdds = Math.abs(countOfTimeThree - 2);
-                int timeFourAdds = Math.abs(countOfTimeFour - 2);
-
-                addMissingDeliveryTimesToQueue(date, timeOneAdds, timeTwoAdds, timeThreeAdds, timeFourAdds);
-            } else {
-                addMissingDeliveryTimesToQueue(expectedDate.toString(), 2, 2, 2, 2);
+            // If the expectedDate is less than the earliest date in the orders table.
+            while (expectedDate.compareTo(earliestDBDateConvert) == -1) {
+                addMissingDeliveryTimesToQueueForPastDates(expectedDate.toString(), 2, 2, 2, 2);
+                expectedDate = incrementDays(expectedDate);
             }
-
-            expectedDate = incrementDays(expectedDate);
         }
 
         // If the expectedDate is within the dates in the orders table
-        while(res2.next()) {
+        while(res.next()) {
 
-            String date = res2.getString("deliveryDate");
+            String date = res.getString("deliveryDate");
             if (expectedDate.toString().equals(date)) {
                 ResultSet timeOne = OrderDB.getDeliveryTimesForADate(date, "09:00:00");
                 ResultSet timeTwo = OrderDB.getDeliveryTimesForADate(date, "11:00:00");
@@ -117,14 +99,15 @@ public class Scheduler {
         }
     }
 
-    private static void addMissingDeliveryTimesToQueue(String date, int timeOneAdds, int timeTwoAdds, int timeThreeAdds, int timeFourAdds) {
+    private static void addMissingDeliveryTimesToQueueForPastDates(String date, int timeOneAdds, int timeTwoAdds, int timeThreeAdds, int timeFourAdds) throws SQLException {
 
         // Add missing 09:00 slot
         while(timeOneAdds != 0) {
             if (timeOneAdds == 2)
                 deliveryPersonToggle = false;
-            else if (timeOneAdds == 1)
+            else if (timeOneAdds == 1) {
                 deliveryPersonToggle = true;
+            }
 
             cancelledOrderDates.offer(date + " 09:00");
 
@@ -140,8 +123,9 @@ public class Scheduler {
         while(timeTwoAdds != 0) {
             if (timeTwoAdds == 2)
                 deliveryPersonToggle = false;
-            else if (timeTwoAdds == 1)
+            else if (timeTwoAdds == 1) {
                 deliveryPersonToggle = true;
+            }
 
             cancelledOrderDates.offer(date + " 11:00");
 
@@ -157,8 +141,9 @@ public class Scheduler {
         while(timeThreeAdds != 0) {
             if (timeThreeAdds == 2)
                 deliveryPersonToggle = false;
-            else if (timeThreeAdds == 1)
+            else if (timeThreeAdds == 1) {
                 deliveryPersonToggle = true;
+            }
 
             cancelledOrderDates.offer(date + " 14:00");
 
@@ -172,11 +157,122 @@ public class Scheduler {
 
         // Add missing 16:00 slot
         while(timeFourAdds != 0) {
-
             if (timeFourAdds == 2)
                 deliveryPersonToggle = false;
-            else if (timeFourAdds == 1)
+            else if (timeFourAdds == 1) {
                 deliveryPersonToggle = true;
+            }
+
+            cancelledOrderDates.offer(date + " 16:00");
+
+            if (deliveryPersonToggle == false)
+                cancelledOrderAssociatedDeliveryPersons.offer(101);
+            else
+                cancelledOrderAssociatedDeliveryPersons.offer(102);
+
+            timeFourAdds--;
+        }
+    }
+
+    private static void addMissingDeliveryTimesToQueue(String date, int timeOneAdds, int timeTwoAdds, int timeThreeAdds, int timeFourAdds) throws SQLException {
+
+        // Add missing 09:00 slot
+        while(timeOneAdds != 0) {
+            if (timeOneAdds == 2)
+                deliveryPersonToggle = false;
+            else if (timeOneAdds == 1) {
+                try {
+                    int deliveryPersonTimeOne = OrderDB.getDeliveryTimesForADateWithDeliveryPerson(date, "09:00").getInt("DeliveryPerson_TUID");
+
+                    if (deliveryPersonTimeOne == 101)
+                        deliveryPersonToggle = true;
+                    else
+                        deliveryPersonToggle = false;
+                } catch (Exception ex) {
+                return;
+                }
+            }
+
+            cancelledOrderDates.offer(date + " 09:00");
+
+            if (deliveryPersonToggle == false)
+                cancelledOrderAssociatedDeliveryPersons.offer(101);
+            else
+                cancelledOrderAssociatedDeliveryPersons.offer(102);
+
+            timeOneAdds--;
+        }
+
+        // Add missing 11:00 slot
+        while(timeTwoAdds != 0) {
+            if (timeTwoAdds == 2)
+                deliveryPersonToggle = false;
+            else if (timeTwoAdds == 1) {
+                try {
+                    int deliveryPersonTimeTwo = OrderDB.getDeliveryTimesForADateWithDeliveryPerson(date, "11:00").getInt("DeliveryPerson_TUID");
+                    if (deliveryPersonTimeTwo == 101)
+                        deliveryPersonToggle = true;
+                    else
+                        deliveryPersonToggle = false;
+                } catch (Exception ex) {
+                    return;
+                }
+            }
+
+
+            cancelledOrderDates.offer(date + " 11:00");
+
+            if (deliveryPersonToggle == false)
+                cancelledOrderAssociatedDeliveryPersons.offer(101);
+            else
+                cancelledOrderAssociatedDeliveryPersons.offer(102);
+
+            timeTwoAdds--;
+        }
+
+        // Add missing 14:00 slot
+        while(timeThreeAdds != 0) {
+            if (timeThreeAdds == 2)
+                deliveryPersonToggle = false;
+            else if (timeThreeAdds == 1) {
+                try {
+                    int deliveryPersonTimeThree = OrderDB.getDeliveryTimesForADateWithDeliveryPerson(date, "14:00").getInt("DeliveryPerson_TUID");
+                    if (deliveryPersonTimeThree == 101)
+                        deliveryPersonToggle = true;
+                    else
+                        deliveryPersonToggle = false;
+                } catch (Exception ex) {
+                    return;
+                }
+            }
+
+
+            cancelledOrderDates.offer(date + " 14:00");
+
+            if (deliveryPersonToggle == false)
+                cancelledOrderAssociatedDeliveryPersons.offer(101);
+            else
+                cancelledOrderAssociatedDeliveryPersons.offer(102);
+
+            timeThreeAdds--;
+        }
+
+        // Add missing 16:00 slot
+        while(timeFourAdds != 0) {
+            if (timeFourAdds == 2)
+                deliveryPersonToggle = false;
+            else if (timeFourAdds == 1) {
+                try {
+                    int deliveryPersonTimeFour = OrderDB.getDeliveryTimesForADateWithDeliveryPerson(date, "16:00").getInt("DeliveryPerson_TUID");
+                    if (deliveryPersonTimeFour == 101)
+                        deliveryPersonToggle = true;
+                    else
+                        deliveryPersonToggle = false;
+                } catch (Exception ex) {
+                    return;
+                }
+            }
+
 
             cancelledOrderDates.offer(date + " 16:00");
 

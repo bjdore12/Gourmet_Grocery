@@ -152,6 +152,22 @@ public class OrderDB {
         return res;
     }
 
+    public static ResultSet getDeliveryTimesForADateWithDeliveryPerson(String date, String time) throws SQLException {
+        if (!databaseExists())
+            buildDatabase();
+
+        Statement state;
+        ResultSet res;
+
+        state = con.createStatement();
+        res = state.executeQuery("SELECT TIME(Delivery_Date_Time) AS TIME, DeliveryPerson_TUID\n" +
+                "FROM Order_Table\n" +
+                "WHERE DATE(Delivery_Date_Time) = DATE('"+date+"')\n" +
+                "AND TIME(Delivery_Date_Time) = TIME('"+time+"')\n" +
+                "ORDER BY TIME(Delivery_Date_Time)");
+        return res;
+    }
+
     public static ResultSet getDeliveryTimesForADate(String date, String time) throws SQLException {
         if (!databaseExists())
             buildDatabase();
