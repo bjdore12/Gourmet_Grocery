@@ -197,7 +197,7 @@ public class Reporter {
         System.out.println("-----------------------------------------------------");
         while (empTotalEarnings.next()) {
             System.out.print("\tEmployee: " +
-                    empTotalEarnings.getString("empName") + " -->\tEarnings:\t" +
+                    empTotalEarnings.getString("empName") + " --> Earnings: " +
                     formatter.format(empTotalEarnings.getDouble("dailyPay")) +
                     "\n");
         }
