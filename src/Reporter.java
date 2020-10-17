@@ -170,7 +170,7 @@ public class Reporter {
                     formatter.format(orderSummary.getDouble("Order_Total")));
         }
         System.out.println("-------------------------------------------------------------------------------------------------------------------------");
-        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tGrand Total: " + formatter.format(totalSales.getDouble("totalSales")));
+        System.out.println("\tGrand Total: " + formatter.format(totalSales.getDouble("totalSales")));
         System.out.println();
     }
 
@@ -197,13 +197,13 @@ public class Reporter {
         System.out.println("-----------------------------------------------------");
         while (empTotalEarnings.next()) {
             System.out.print("\tEmployee: " +
-                    empTotalEarnings.getString("empName") + " -->\tEarnings:\t\t" +
+                    empTotalEarnings.getString("empName") + " -->\tEarnings:\t" +
                     formatter.format(empTotalEarnings.getDouble("dailyPay")) +
                     "\n");
         }
-        System.out.println("\t\t\t\t\t\t-------------------------");
+        System.out.println("\t-------------------------");
         while (allTotalPay.next()) {
-            System.out.print("\t\t\t\t\t\tTotal Earnings:\t" +
+            System.out.print("\tTotal Earnings:\t" +
                     formatter.format(allTotalPay.getDouble("dailyPay")) +
                     "\n");
         }
