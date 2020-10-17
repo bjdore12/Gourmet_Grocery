@@ -1,3 +1,19 @@
+/*
+
+    Author:     Benjamin J. Dore
+    Date:       10/17/2020
+
+    Description:
+        The Reporter class is responsible for generating all report on data in the system.
+        The following reports are handled here:
+            1. Customer Order Summary and Costs - Orders in the system, the totals for those orders and relevant delivery info
+            2. Inventory Report - Displays status info on the current inventory
+            3. Employee Earnings - Displays how much delivery person have earned
+            4. Delivery Dates - Displays a list of delivery dates for each order and shows delivery person
+            5. Customer Log - Display all recorded customers in the system
+
+*/
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,10 +26,13 @@ public class Reporter {
 
     private static Connection con;
 
+    // The Reporter will need to be connected to the DB.
     static {
         con = DatabaseConnection.getDBConnection();
     }
 
+    // Function will print a detailed report on all the orders in the system. Detailed view will include
+    // each item in the order, their quantity, and costs.
     public static void printOrderSpecifics(int Order_TUID) throws SQLException {
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
@@ -37,7 +56,8 @@ public class Reporter {
         System.out.println();
     }
 
-    public static void printFullOrderSummary(String beginDate, String endDate) throws SQLException, ClassNotFoundException {
+    // Report will print a summary of orders and the details for each order including each item, quantites and costs.
+    public static void printFullOrderSummary(String beginDate, String endDate) throws SQLException {
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         ResultSet orderSummary = OrderDB.getOrders(beginDate, endDate, "Customer_TUID");
         ResultSet totalSales = OrderDB.getAllOrderTotalCost(beginDate, endDate);
@@ -67,7 +87,8 @@ public class Reporter {
         }
     }
 
-    public static void printOrderDeliveryTimes() throws SQLException, ClassNotFoundException {
+    // Prints a report of all delivery times in the system for each order, includes delivery person.
+    public static void printOrderDeliveryTimes() throws SQLException {
         ResultSet orderSummary = OrderDB.getOrders();
         ResultSet customerInfo;
 
@@ -92,7 +113,8 @@ public class Reporter {
         System.out.println();
     }
 
-    public static void printOrderDeliveryTimes(String beginDate, String endDate) throws SQLException, ClassNotFoundException {
+    // Prints a report of all delivery times within a date range, for each order, includes delivery person.
+    public static void printOrderDeliveryTimes(String beginDate, String endDate) throws SQLException {
         ResultSet orderSummary = OrderDB.getOrders(beginDate, endDate, "TUID");
         ResultSet customerInfo;
 
@@ -118,6 +140,8 @@ public class Reporter {
         System.out.println();
     }
 
+    // Intended to print a high level overview of all orders within a date range, there is less information in this report than the
+    // full order summary function.
     public static void printOrderSummary(String beginDate, String endDate) throws SQLException {
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         ResultSet orderSummary = OrderDB.getOrders(beginDate, endDate, "Customer_TUID");
@@ -150,6 +174,7 @@ public class Reporter {
         System.out.println();
     }
 
+    // Prints a report of how much an employee earend for each day within a date range. Prints total earning for employees.
     public static void printEmployeeEarnings(String beginDate, String endDate) throws SQLException {
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         ResultSet empDailyEarnings = OrderDB.getEmpPayPerDelivery(beginDate, endDate);
@@ -185,13 +210,13 @@ public class Reporter {
         System.out.println();
     }
 
+    // Print an inventory status report showing remaining quantities.
     public static void displayCurrentInventory() {
         ResultSet rs;
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
         try {
-            // Bring back the set of user from the database
             rs = InventoryDB.displayInventory();
-            // Iterate over the resultset, print out each record's details
+
             System.out.println("\n--------------------");
             System.out.println("| Inventory Report |");
             System.out.println("--------------------");
@@ -212,12 +237,12 @@ public class Reporter {
         }
     }
 
+    // Displays all the customers that have placed orders in the system.
     public static void displayCustomerLog() {
         ResultSet rs;
         try {
-            // Bring back the set of user from the database
+
             rs = CustomerDB.getCustomers();
-            // Iterate over the resultset, print out each record's details
 
             System.out.println("\n-----------------------");
             System.out.println("| Customer Log Report |");
@@ -239,6 +264,7 @@ public class Reporter {
         }
     }
 
+    // Used to format the TUID (So if TUID is 1, then display as 001).
     public static String formatTUID(int TUID) {
         final int THREE_DIGITS = 3;
         int length = String.valueOf(TUID).length();

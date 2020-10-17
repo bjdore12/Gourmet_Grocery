@@ -1,27 +1,41 @@
+/*
+
+    Author:     Benjamin J. Dore
+    Date:       10/17/2020
+
+    Description:
+        This class defines the Inventory_Table and is responsible for table startup, getting and setting inventory items
+        and resetting the inventory to default values on startup.
+
+*/
+
 import java.sql.*;
 import java.text.NumberFormat;
 
 public class InventoryDB {
 
+    // Call the database connection and get connected to the DB.
     private static Connection con;
     static {
         con = DatabaseConnection.getDBConnection();
     }
 
+    // Does the database already exist? Check the sqlite_master table for the Inventory_Table
     public static boolean databaseExists() throws SQLException {
         Statement state;
         ResultSet res;
 
-        // Check for database table existence and if it's not there, create it and add 2 records
+        // Check for database table existence and if it's not there, create it.
         state = con.createStatement();
         res = state.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='Inventory_Table'");
 
-        if (res.next())
+        if (res.next())     // If the table doesn't exist, this will return false.
             return true;
         else
             return false;
     }
 
+    // Build the Inventory_Table database
     public static void buildDatabase() throws SQLException {
         Statement state;
 
@@ -35,10 +49,11 @@ public class InventoryDB {
                     "Unit_Price DOUBLE," +
                     "PRIMARY KEY (TUID));");
 
-            populateInventory();
+            populateInventory();     // Populate the inventory with initial values.
         }
     }
 
+    // This function will run on DB startup to populate the inventory with intial values.
     private static void populateInventory() throws SQLException {
 
         addInventoryItem(101, "Peanut Butter – Chunky", 100, 10.00);
@@ -56,8 +71,9 @@ public class InventoryDB {
 
     }
 
+    // Get all of the inventory information and return them as a ResultSet
     public static ResultSet displayInventory() throws SQLException {
-        if (!databaseExists())
+        if (!databaseExists())      // Check to see if the table exists first.
             buildDatabase();
 
         Statement state;
@@ -68,8 +84,9 @@ public class InventoryDB {
         return res;
     }
 
+    // Reset the Inventory_Table back to intial values, to be run on startup if the user wants to reset the system.
     public static void resetInventory() throws SQLException {
-        if (!databaseExists())
+        if (!databaseExists())      // Check to see if the table exists first.
             buildDatabase();
 
         PreparedStatement prep;
@@ -79,8 +96,10 @@ public class InventoryDB {
         populateInventory();
     }
 
+    // Add an inventory item to the Inventory_Table, currently this function is used to prepopulate the inventory on DB
+    // startup.
     public static boolean addInventoryItem(int TUID, String itemName, int quantity, double unitPrice) throws SQLException {
-        if (!databaseExists())
+        if (!databaseExists())      // Check to see if the table exists first.
             buildDatabase();
 
         PreparedStatement prep;
@@ -93,8 +112,9 @@ public class InventoryDB {
         return prep.execute();
     }
 
+    // Get the details for a specific inventory item by TUID, return as ResultSet
     public static ResultSet getInventoryItemDetails(int TUID) throws SQLException {
-        if (!databaseExists())
+        if (!databaseExists())      // Check to see if the table exists first.
             buildDatabase();
 
         Statement state;
@@ -105,23 +125,23 @@ public class InventoryDB {
         return res;
     }
 
-
+    // Modify the quantity of a specific inventory item.
     public static boolean changeQuantity(int TUID, int requestedQuantity) throws SQLException {
-        ResultSet res = getInventoryItemDetails(TUID);
+        ResultSet res = getInventoryItemDetails(TUID);  // Get the inventory item details for the specific TUID
         PreparedStatement prep;
 
         if (res.next())  {
-            int quantity = res.getInt("Quantity");
-            quantity = (quantity + requestedQuantity > 0) ? quantity + requestedQuantity : 0;
+            int quantity = res.getInt("Quantity");      // Get the current quantity.
+            quantity = (quantity + requestedQuantity > 0) ? quantity + requestedQuantity : 0;   // Get the new quantity (Quantity cannot be less than 0)
 
             prep = con.prepareStatement("UPDATE Inventory_Table SET Quantity = ? WHERE TUID = ?");
             prep.setInt(1, quantity);
             prep.setInt(2, TUID);
 
-            return prep.execute();
+            return prep.execute();      // Set the quantity and return true if successful.
 
         } else {
-            return false;
+            return false;   // The inventory item doesn't exist.
         }
     }
 }
