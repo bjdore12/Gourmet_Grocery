@@ -56,18 +56,18 @@ public class InventoryDB {
     // This function will run on DB startup to populate the inventory with intial values.
     private static void populateInventory() throws SQLException {
 
-        addInventoryItem(101, "Peanut Butter – Chunky", 100, 10.00);
-        addInventoryItem(102, "Peanut Butter – Smooth", 100, 11.00);
-        addInventoryItem(201, "Jelly – Strawberry", 100, 9.50);
-        addInventoryItem(202, "Jelly – Raspberry", 100, 9.50);
-        addInventoryItem(203, "Jelly – Peach", 100, 11.25);
-        addInventoryItem(301, "Bread – White", 40, 17.00);
-        addInventoryItem(302, "Bread – Wheat", 30, 19.00);
-        addInventoryItem(303, "Bread – Sourdough", 40, 21.50);
-        addInventoryItem(401, "Milk – White", 10, 17.00);
-        addInventoryItem(402, "Milk – Chocolate", 15, 17.00);
-        addInventoryItem(403, "Milk – White 2%", 20, 18.00);
-        addInventoryItem(404, "Milk – Chocolate 2%", 20, 18.00);
+        addInventoryItem(101, "Peanut Butter - Chunky", 100, 10.00);
+        addInventoryItem(102, "Peanut Butter - Smooth", 100, 11.00);
+        addInventoryItem(201, "Jelly - Strawberry", 100, 9.50);
+        addInventoryItem(202, "Jelly - Raspberry", 100, 9.50);
+        addInventoryItem(203, "Jelly - Peach", 100, 11.25);
+        addInventoryItem(301, "Bread - White", 40, 17.00);
+        addInventoryItem(302, "Bread - Wheat", 30, 19.00);
+        addInventoryItem(303, "Bread - Sourdough", 40, 21.50);
+        addInventoryItem(401, "Milk - White", 10, 17.00);
+        addInventoryItem(402, "Milk - Chocolate", 15, 17.00);
+        addInventoryItem(403, "Milk - White 2%", 20, 18.00);
+        addInventoryItem(404, "Milk - Chocolate 2%", 20, 18.00);
 
     }
 
