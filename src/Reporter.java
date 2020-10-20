@@ -22,8 +22,6 @@ import java.text.NumberFormat;
 
 public class Reporter {
 
-    // TODO: Some of the reports format funny in the command prompt, fix this so you don't lose points on something silly.
-
     private static Connection con;
 
     // The Reporter will need to be connected to the DB.
